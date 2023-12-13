@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_transaksi');
             $table->unsignedBigInteger('id_layanan');
             $table->integer('harga');
-            $table->integer('jumlah');
+            $table->decimal('jumlah', $precision = 11, $scale = 1);
             $table->integer('subtotal');
             $table->timestamps();
 

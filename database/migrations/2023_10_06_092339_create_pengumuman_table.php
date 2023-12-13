@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('judul');
             $table->text('deskripsi');
             $table->integer('diskon');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -57,12 +57,12 @@
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-area me-1"></i>
-                                        Area Chart Example
+                                        Pemasukan
                                     </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                    <div class="card-body"><canvas id="pemasukan" width="100%" height="40"></canvas></div>
                                 </div>
                             </div>
-                            <div class="col-xl-6">
+                            {{--  <div class="col-xl-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-bar me-1"></i>
@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
                                 </div>
-                            </div>
+                            </div>  --}}
                         </div>
                         @endif
                     </div>
@@ -89,12 +89,57 @@
                 </footer>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scriptsAdmin.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        @include('template.foot')
+        <script>
+            const pen = document.getElementById('pemasukan');
+            new Chart(pen, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($bulans) !!},
+                    datasets: [{
+                    label: "Pemasukan",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(2,117,216,0.2)",
+                    borderColor: "rgba(2,117,216,1)",
+                    pointRadius: 5,
+                    pointBackgroundColor: "rgba(2,117,216,1)",
+                    pointBorderColor: "rgba(255,255,255,0.8)",
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                    pointHitRadius: 50,
+                    pointBorderWidth: 2,
+                    data: {!! json_encode($bulanTotal) !!},
+                    }],
+                },
+                options: {
+                    scales: {
+                    xAxes: [{
+                        time: {
+                        unit: 'date'
+                        },
+                        gridLines: {
+                        display: false
+                        },
+                        ticks: {
+                        maxTicksLimit: 7
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                        min: 0,
+                        max: {{ round(max($bulanTotal), -5)+100000 }},
+                        maxTicksLimit: 5
+                        },
+                        gridLines: {
+                        color: "rgba(0, 0, 0, .125)",
+                        }
+                    }],
+                    },
+                    legend: {
+                    display: false
+                    }
+                }
+            });
+        </script>
     </body>
 </html>

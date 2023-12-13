@@ -29,7 +29,7 @@
             <div class="container px-4 text-center">
                 <h1 class="fw-bolder">Selamat Datang ke Sinar Laundry</h1>
                 <p class="lead">Bersih, Rapi, Wangi!</p>
-                <a class="btn btn-lg btn-light" href="/login">Login</a>
+                <a class="btn btn-lg btn-light" href="{{ url('login/index') }}">Login</a>
             </div>
         </header>
         <!-- layanan section-->
@@ -44,7 +44,7 @@
                                 <div class="card border-primary">
                                   <h5 class="card-header">{{ $item->nama }}</h5>
                                 <div class="card-body ">
-                                  <p class="card-text fs-5 fw-medium">Harga = Rp.{{ $item->harga }} / {{ $item->satuan }}</p>
+                                  <p class="card-text fs-5 fw-medium">Harga = {{ rupiah($item->harga) }} / {{ $item->satuan }}</p>
                                   <p class="card-text fs-5 fw-medium">Durasi = {{ $item->durasi }} Hari</p>
                                 </div>
                               </div>

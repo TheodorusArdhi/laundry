@@ -6,17 +6,25 @@ use Illuminate\Http\Request;
 use App\Models\User;
 Use Illuminate\Support\Facades\Hash;
 use Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 use Str;
 use Carbon\Carbon;
 use Session;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfilController;
 
 class AuthController extends Controller
 {
-    public function register(){  
-        return view('register');
+    public function indexLogin(){  
+        return view('auth.login');
+    }
+    
+    public function indexRegister(){  
+        return view('auth.register');
     }
 
-    public function postRegister(Request $request){
+    public function storeRegister(Request $request){
         Session::flash('nama', $request->nama);
         Session::flash('email', $request->email);
         Session::flash('no_telp', $request->no_telp);
@@ -26,7 +34,7 @@ class AuthController extends Controller
         $request->validate([
             'nama'=>'required',
             'email'=>'required|unique:users',
-            'no_telp'=>'required',
+            'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/'],
             'password'=>'required',
             'passwordConfirm'=>'required|same:password'
         ], [
@@ -34,29 +42,39 @@ class AuthController extends Controller
             'email.required' => 'email wajib diisi',
             'email.unique' => 'email sudah terpakai',
             'no_telp.required' => 'nomor telepon wajib diisi',
+            'no_telp.regex' => 'nomor telepon tidak valid',
             'password.required' => 'password wajib diisi',
             'passwordConfirm.required' => 'konfirmasi password wajib diisi',
-            'passwordConfirm.same' => 'konfirmasi password wajib sama dengan password'
+            'passwordConfirm.same' => 'konfirmasi password tidak sama'
         ]);
+        $no_telp = $request->no_telp;
+        $valid = new WAController;
+        $valid = $valid->telepon($no_telp);
+        if ($valid->not_registered != null ){
+            return redirect('/register/index')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+        }
+
+        if(substr(trim($no_telp), 0, 2)=="62"){
+            $no_telp = "62".substr(trim($no_telp), 2);
+        }
+        elseif(substr(trim($no_telp), 0, 1)=="0"){
+            $no_telp = "62".substr(trim($no_telp), 1);
+        }
 
         $user = new User([
             'nama' => $request->nama,
             'email' => $request->email,
-            'no_telp' => $request->no_telp,
+            'no_telp' => $no_telp,
             'password' => Hash::make($request->password),
             'remember_token' => Str::random(60),
             'level' => ('pengguna'),
             'notifikasi' => ('on')
         ]);
         $user->save();
-        return redirect('login')->with('success', 'Registrasi Sukses');
+        return redirect()->route('indexLogin')->with('success', 'Registrasi Sukses');
     }
     
-    public function login(){  
-        return view('login');
-    }
-    
-    public function postLogin(Request $request){  
+    public function login(Request $request){  
         $request->validate([
             'email'=>'required',
             'password'=>'required'
@@ -67,17 +85,14 @@ class AuthController extends Controller
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             return redirect('dashboard');
         }
-        // if(Auth::attempt($request->only('email','password'))){
-        //     return redirect('/password');
-        // }
-        return redirect('login')->with('warning', 'email atau password salah')->withInput();
+        return redirect()->route('indexLogin')->with('warning', 'Email atau Password Salah')->withInput();
     }
 
-    public function password(){  
-        return view('password');
+    public function indexPassword(){  
+        return view('auth.password');
     }
 
-    public function postPassword(Request $request){  
+    public function updatePassword(Request $request){  
         $request->validate([
             'oldPassword'=>'required|current_password',
             'newPassword'=>'required',
@@ -93,7 +108,7 @@ class AuthController extends Controller
         $user = User::find(Auth::id());
         $user->password = Hash::make($request->newPassword);
         $user->save();
-        return redirect('password')->with('success', 'Ubah Password Sukses')->withInput();
+        return redirect('profil')->with('success', 'Ubah Password Sukses')->withInput();
     }
 
     public function logout(){

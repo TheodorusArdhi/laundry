@@ -12,6 +12,6 @@ class Layanan extends Model
     protected $table = 'layanan';
     protected $primaryKey = 'id_layanan';
     protected $fillable = [
-        'nama', 'harga', 'durasi', 'satuan'
+        'nama', 'harga', 'durasi', 'satuan', 'status'
     ];
 }

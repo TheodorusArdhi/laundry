@@ -2,9 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LayananController;
+use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PoinController;
+use App\Http\Controllers\CabangController;
+use App\Http\Controllers\PenyimpananController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,64 +23,93 @@ use App\Http\Controllers\DashboardController;
 | contains the "web" middleware group. Now create something great!
 |
 */   
-    Route::get('/',[UserController::class,'home']);
+    Route::get('/',[HomeController::class,'home']);
     
-    Route::get('/login',[AuthController::class,'login'])->name('login');
-    Route::post('/postLogin',[AuthController::class,'postLogin'])->name('postLogin');
-    Route::get('/register',[AuthController::class,'register']);
-    Route::post('/postRegister',[AuthController::class,'postRegister'])->name('postRegister');
+    Route::get('/login/index',[AuthController::class,'indexLogin'])->name('indexLogin');
+    Route::post('/login',[AuthController::class,'login'])->name('login');
+    Route::get('/register/index',[AuthController::class,'indexRegister']);
+    Route::post('/register/store',[AuthController::class,'storeRegister'])->name('storeRegister');
     Route::get('/logout',[AuthController::class, 'logout'])->name('logout'); 
 
-Route::middleware(['auth', 'checkLevel:admin'])->group(function () {
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(function () {
 
-    Route::get('/layanan',[AdminController::class,'layanan']);
-    Route::get('/tambahLayanan',[AdminController::class,'tambahLayanan']);
-    Route::post('/postLayanan',[AdminController::class,'postLayanan'])->name('postLayanan');
-    Route::get('/editLayanan/{id}',[AdminController::class,'editLayanan']);
-    Route::post('/updateLayanan/{id}',[AdminController::class,'updateLayanan'])->name('updateLayanan');
-    Route::delete('/hapusLayanan/{id}',[AdminController::class,'hapusLayanan'])->name('hapusLayanan');
+    Route::get('/layanan',[LayananController::class,'index']);
+    Route::get('/layanan/create',[LayananController::class,'create']);
+    Route::post('/layanan/store',[LayananController::class,'store'])->name('store');
+    Route::get('/layanan/{id}/edit',[LayananController::class,'edit']);
+    Route::post('/layanan/{id}/update',[LayananController::class,'update'])->name('update');
+    Route::delete('/layanan/{id}/delete',[LayananController::class,'delete'])->name('delete');
 
-    Route::get('/pengumuman',[AdminController::class,'pengumuman']);
-    Route::get('/tambahPengumuman',[AdminController::class,'tambahPengumuman']);
-    Route::post('/postPengumuman',[AdminController::class,'postPengumuman'])->name('postPengumuman');
-    Route::get('/editPengumuman/{id}',[AdminController::class,'editPengumuman']);
-    Route::post('/updatePengumuman/{id}',[AdminController::class,'updatePengumuman'])->name('updatePengumuman');
-    Route::delete('/hapusPengumuman/{id}',[AdminController::class,'hapusPengumuman'])->name('hapusPengumuman');
+    Route::get('/cabang',[CabangController::class,'index']);
+    Route::get('/cabang/create',[CabangController::class,'create']);
+    Route::post('/cabang/store',[CabangController::class,'store'])->name('store');
+    Route::get('/cabang/{id}/edit',[CabangController::class,'edit']);
+    Route::post('/cabang/{id}/update',[CabangController::class,'update'])->name('update');
+    Route::delete('/cabang/{id}/delete',[CabangController::class,'delete'])->name('delete');
 
-    Route::get('/pengguna',[AdminController::class,'pengguna']);
-    Route::get('/tambahPengguna',[AdminController::class,'tambahPengguna']);
-    Route::post('/postPengguna',[AdminController::class,'postPengguna'])->name('postPengguna');
-    Route::delete('/hapusPengguna/{id}',[AdminController::class,'hapusPengguna'])->name('hapusPengguna');
+    Route::get('/pengumuman',[PengumumanController::class,'index']);
+    Route::get('/pengumuman/create',[PengumumanController::class,'create']);
+    Route::post('/pengumuman/store',[PengumumanController::class,'store'])->name('store');
+    Route::get('/pengumuman/{id}/edit',[PengumumanController::class,'edit']);
+    Route::post('/pengumuman/{id}/update',[PengumumanController::class,'update'])->name('update');
+    Route::delete('/pengumuman/{id}/delete',[PengumumanController::class,'delete'])->name('delete');
 
-    Route::get('/transaksiAdmin',[AdminController::class,'transaksiAdmin']);
-    Route::get('/lihatTransaksi/{id}',[AdminController::class,'lihatTransaksi']);
-    Route::get('/tambahTransaksi',[AdminController::class,'tambahTransaksi']);
-    Route::get('/transaksiDetail',[AdminController::class,'transaksiDetail']);
-    Route::get('/transaksiLunas/{id}',[AdminController::class,'transaksiLunas']);
-    Route::get('/transaksiDiambil/{id}',[AdminController::class,'transaksiDiambil']);
-    Route::post('/tambahTransaksiDetail',[AdminController::class,'tambahTransaksiDetail'])->name('tambahTransaksiDetail');
-    Route::post('/updateTransaksiDetail/{id}',[AdminController::class,'updateTransaksiDetail'])->name('updateTransaksiDetail');
-    Route::post('/diskon',[AdminController::class,'diskon'])->name('diskon');
-    Route::post('/simpanTransaksi',[AdminController::class,'simpanTransaksi'])->name('simpanTransaksi');
-    Route::delete('/hapusTransaksiDetail/{id}',[AdminController::class,'hapusTransaksiDetail'])->name('hapusTransaksiDetail');
-    
+    Route::get('/user',[UserController::class,'index']);
+    Route::get('/user/create',[UserController::class,'create']);
+    Route::post('/user/store',[UserController::class,'store'])->name('store');
+    Route::get('/user/{id}/edit',[UserController::class,'edit']);
+    Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
+    Route::delete('/user/{id}/delete',[UserController::class,'delete'])->name('delete');
+
+    Route::get('/transaksi',[TransaksiController::class,'indexAdmin']);
+    Route::get('/transaksi/data',[TransaksiController::class,'data']);
+    Route::get('/transaksi/create',[TransaksiController::class,'create']);
+    Route::post('/transaksi/store',[TransaksiController::class,'store'])->name('store');
+    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editAdmin'])->name('editAdmin');
+    Route::post('/transaksi/{id}/update',[TransaksiController::class,'update'])->name('update');
+    Route::post('/transaksi/diskon',[TransaksiController::class,'diskon'])->name('diskon');
+    Route::post('/transaksi/poin',[TransaksiController::class,'poin'])->name('poin');
+    Route::post('/transaksi/{id}/edit/poin',[TransaksiController::class,'poinEdit'])->name('poinEdit');
+    Route::post('/transaksi/{id}/edit/diskon',[TransaksiController::class,'diskonEdit'])->name('diskonEdit');
+    Route::delete('/transaksi/{id}/delete',[TransaksiController::class,'delete'])->name('delete');
+    Route::get('/transaksi/{id}/lunas',[TransaksiController::class,'lunas']);
+    Route::get('/transaksi/{id}/ambil',[TransaksiController::class,'ambil']);
+
+    Route::post('/transaksi/detail/store',[TransaksiDetailController::class,'store'])->name('store');
+    Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
+    Route::post('/transaksi/detail/{id}/update',[TransaksiDetailController::class,'update'])->name('update');
+    Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
+    Route::delete('/transaksi/detail/{id}/delete',[TransaksiDetailController::class,'delete'])->name('delete');
+    Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');
+
+    Route::get('/poin',[PoinController::class,'indexAdmin']);
+    Route::post('/poin/user',[PoinController::class,'poin']);
+
+    Route::get('/penyimpanan',[PenyimpananController::class,'index']);
+    Route::post('/penyimpanan/cabang',[PenyimpananController::class,'cabang']);
+    Route::get('/penyimpanan/create',[PenyimpananController::class,'create']);
+    Route::post('/penyimpanan/store',[PenyimpananController::class,'store'])->name('store');
+    Route::get('/penyimpanan/{id}/edit',[PenyimpananController::class,'edit']);
+    Route::post('/penyimpanan/{id}/update',[PenyimpananController::class,'update'])->name('update');
+    Route::delete('/penyimpanan/{id}/delete',[PenyimpananController::class,'delete'])->name('delete');
 }); 
 
-Route::middleware(['auth', 'checkLevel:pengguna'])->group(function () {
+Route::prefix('/user')->middleware(['auth', 'checkLevel:pengguna'])->group(function () {
     
-    Route::get('/transaksiPengguna',[UserController::class,'transaksiPengguna']);
-    Route::get('/lihatTransaksiPengguna/{id}',[UserController::class,'lihatTransaksiPengguna']);
-
+    Route::get('/transaksi',[TransaksiController::class,'indexUser']);
+    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editUser']);
+    Route::get('/poin',[PoinController::class,'indexUser']);
 }); 
 
 Route::middleware(['auth', 'checkLevel:pengguna,admin'])->group(function () {
 
-    Route::get('/dashboard',[UserController::class,'dashboard']);
-    Route::get('/password',[AuthController::class,'password']);
-    Route::post('/postPassword',[AuthController::class,'postPassword'])->name('postPassword');
-    Route::get('/profile',[UserController::class,'profile']);
-    Route::post('/editProfile',[UserController::class,'editProfile'])->name('editProfile');
-    Route::get('/transaksiNota/{id}',[UserController::class,'transaksiNota']);
-    Route::get('/transaksiUnduh/{id}/unduh',[UserController::class,'transaksiUnduh']);
+    Route::get('/dashboard',[HomeController::class,'dashboard']);
+    Route::get('/password',[AuthController::class,'indexPassword']);
+    Route::post('/password/update',[AuthController::class,'updatePassword'])->name('updatePassword');
+    Route::get('/profil',[ProfilController::class,'index']);
+    Route::post('/profil/update',[ProfilController::class,'update'])->name('update');
+    Route::get('/transaksi/{id}/invoice',[TransaksiController::class,'invoice']);
+
+    Route::get('/transaksiNota/{id}',[TransaksiController::class,'transaksiNota']);
 
 }); 

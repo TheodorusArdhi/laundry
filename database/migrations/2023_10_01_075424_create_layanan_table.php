@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('harga');
             $table->integer('durasi');
             $table->string('satuan');
+            $table->string('status');
             $table->timestamps();
         });
     }
