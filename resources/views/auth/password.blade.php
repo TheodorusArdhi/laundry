@@ -41,8 +41,8 @@
                                             </div>
 
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="btn btn-danger" href="{{ url('profil') }}">Kembali</a>
-                                                <button type="submit" class="btn btn-primary" >Ubah Password</button>
+                                                <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('profil') }}">Kembali</a>
+                                                <button type="submit" class="btn btn-primary fw-semibold" style="font-size: 1.12rem;" >Ubah Password</button>
                                             </div>
                                         </form>
                                     </div>

@@ -13,25 +13,22 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Transaksi</h1>
                         @if (Auth::user()->level == "admin")
-                        <a class="btn btn-success" href="{{ url('admin/transaksi/data') }}" role="button">Tambah</a>
+                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi/data') }}" role="button">Tambah <i class="fa-solid fa-plus"></i></a>
                         @endif
-                        <div class="card mb-4 mt-2 ">                            
+                        <div class="card mb-4 mt-2 fs-5">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 <a> <b class="fw-semibold"></b></a>
                             </div>                            
-                            <div class="card-body">
+                            <div class="card-body body">
                                 <table id="datatablesSimple">
                                     <thead >
                                         <tr>
                                             <th>No</th>
                                             <th>Kode Transaksi</th>
-                                            <th>Tanggal Masuk</th>
-                                            <th>Tanggal Selesai</th>
                                             <th>Nama</th>
-                                            <th>Status Transaksi</th>
-                                            <th>Status Pembayaran</th>
-                                            <th>Harga</th>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -39,12 +36,9 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Kode Transaksi</th>
-                                            <th>Tanggal Masuk</th>
-                                            <th>Tanggal Selesai</th>
                                             <th>Nama</th>
-                                            <th>Status Transaksi</th>
-                                            <th>Status Pembayaran</th>
-                                            <th>Harga</th>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </tfoot>
@@ -53,13 +47,13 @@
                                     ?>
                                     <tbody >
                                         @foreach ($transaksi as $item)
-                                        <tr>
-                                            <td>{{ $i++ }}</td>
+                                        <tr >
+                                            <td >{{ $i++ }}</td>
                                             <td>{{ $item -> no_transaksi }}</td>
-                                            <td>{{ $item -> tgl_masuk -> translatedFormat('l, d F Y') }}</td>
-                                            <td>{{ $item -> tgl_selesai -> translatedFormat('l, d F Y') }}</td>
                                             <td>{{ $item -> user -> nama }}</td>
+                                            <td>{{ $item -> tgl_masuk -> translatedFormat('l, d F Y') }}</td>
                                             <td>
+                                                Transaksi: 
                                                 @if($item -> id_status_transaksi == "3")
                                                 <span class="badge text-bg-secondary">{{ $item -> statusTransaksi -> nama }}</span>
                                                 @elseif ($item -> id_status_transaksi == "4")
@@ -70,35 +64,25 @@
                                                 <span class="badge text-bg-danger">{{ $item -> statusTransaksi -> nama }}</span>
                                                 @elseif ($item -> id_status_transaksi == "7")
                                                 <span class="badge text-bg-primary">{{ $item -> statusTransaksi -> nama }}</span>
+                                                @elseif ($item -> id_status_transaksi == "8")
+                                                <span class="badge text-bg-dark">{{ $item -> statusTransaksi -> nama }}</span>
                                                 @endif
-                                            </td>
-                                            <td>
+
+                                                Pembayaran: 
                                                 @if($item -> id_status_pembayaran == "1")
                                                 <span class="badge text-bg-success">{{ $item -> statusPembayaran -> nama }}</span>
                                                 @elseif ($item -> id_status_pembayaran == "2")
                                                 <span class="badge text-bg-warning">{{ $item -> statusPembayaran -> nama }}</span>
                                                 @endif
                                             </td>
-                                            <td>{{ rupiah($item -> total_tagihan) }}</td>
                                             <td>
-                                            @if(auth()->user()->level=="admin")
-                                                <a class="btn btn-primary" href={{ url('admin/transaksi/'. $item->id_transaksi.'/edit') }} role="button">Lihat</a>
-                                                @if ($item->id_status_pembayaran == "2")
-                                                <a class="btn btn-success" href={{ url('admin/transaksi/'. $item->id_transaksi.'/lunas') }} role="button" >Lunas</a>
-                                                @endif
-                                                @if ($item->id_status_pembayaran == "1" && ($item->id_status_transaksi == "4" || $item->id_status_transaksi == "5" || $item->id_status_transaksi == "6"))
-                                                <a class="btn btn-info" href={{ url('admin/transaksi/'. $item->id_transaksi.'/ambil') }} role="button">Diambil</a>
-                                                @endif
-                                                @if($item -> id_status_transaksi == "3")
-                                                <a class="btn btn-danger" href={{ url('admin/transaksi/'. $item->id_transaksi.'/delete') }} data-confirm-delete="true" role="button">Batal</a>
-                                                @endif
+                                            @if(auth()->user()->level=="admin" || auth()->user()->level=="owner")
+                                                <a class="btn btn-warning" href={{ url('admin/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             @endif
                                             @if(auth()->user()->level=="pengguna")
-                                                <a class="btn btn-primary" href={{ url('user/transaksi/'. $item->id_transaksi.'/edit') }} role="button">Lihat</a>
-                                                {{--  <a class="btn btn-danger" href={{ url('', $item->id_transaksi) }} role="button">Komplain</a>  --}}
+                                                <a class="btn btn-warning" href={{ url('user/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             @endif
                                             <a class="btn btn-info" href={{ url('transaksiNota', $item->id_transaksi) }} role="button">Nota</a>
-                                            {{--  <a class="btn btn-warning" href={{ url('transaksiUnduh/'.$item->id_transaksi.'/unduh') }} role="button">Nota</a>  --}}
                                             </td>
                                         </tr>
                                         @endforeach
@@ -112,5 +96,11 @@
             </div>
         </div>
         @include('template.foot')
+        <script>
+            body {
+                font-family: sans-serif;
+                font-size: 2rem;
+              }
+        </script>
     </body>
 </html>

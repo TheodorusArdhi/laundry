@@ -39,7 +39,7 @@ class CabangController extends Controller
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
         if ($valid->not_registered != null ){
-            return redirect('admin/cabang/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+            return redirect('owner/cabang/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
         if(substr(trim($no_telp), 0, 2)=="62"){
@@ -53,9 +53,10 @@ class CabangController extends Controller
             'nama' => $request->nama,
             'alamat' => $request->alamat,
             'no_telp' =>$no_telp,
+            'status' =>"aktif"
         ]);
         $cabang->save();
-        return redirect('admin/cabang')->with('success', 'Tambah Cabang Sukses');
+        return redirect('owner/cabang')->with('success', 'Tambah Cabang Sukses');
     }
 
     public function edit($id){  
@@ -80,7 +81,7 @@ class CabangController extends Controller
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
         if ($valid->not_registered != null ){
-            return redirect('admin/cabang/'.$id.'/edit')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+            return redirect('owner/cabang/'.$id.'/edit')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
         if(substr(trim($no_telp), 0, 2)=="62"){
@@ -92,11 +93,11 @@ class CabangController extends Controller
 
         $cabang->update($request->all());
         $cabang->update(['no_telp' => $no_telp]);
-        return redirect('admin/cabang')->with('success', 'Edit Cabang Sukses');
+        return redirect('owner/cabang')->with('success', 'Edit Cabang Sukses');
     }
 
     public function delete( $id){  
         $cabang = Cabang::findorfail($id)->delete();
-        return redirect('admin/cabang')->with('success', 'Hapus Cabang Sukses');
+        return redirect('owner/cabang')->with('success', 'Hapus Cabang Sukses');
     }
 }

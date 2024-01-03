@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Cabang;
 use RealRashid\SweetAlert\Facades\Alert;
 use Auth;
 use Session;
@@ -19,29 +20,37 @@ class UserController extends Controller
         confirmDelete($title);
         return view('user.index', compact('pengguna'));
     }
+
+    public function indexAdmin(){  
+        $pengguna = User::whereNot('id_user', Auth::user()->id_user)->where('level', 'pengguna')->where('id_cabang', Auth::user()->id_cabang)->get();
+        $title = 'Yakin Hapus Pengguna?';
+        confirmDelete($title);
+        return view('user.index', compact('pengguna'));
+    }
     
     public function create(){  
-        return view('user.create');
+        $cabang = Cabang::all();
+        return view('user.create', compact('cabang'));
     }
 
     public function store(Request $request){
-
         Session::flash('nama', $request->nama);
         Session::flash('email', $request->email);
         Session::flash('no_telp', $request->no_telp);
-        Session::flash('level', $request->level);
+        Session::flash('cabang', $request->cabang);
 
         $request->validate([
             'nama'=>'required',
             'email'=>'required|unique:users',
-            'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/','unique:users'],
+            'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/'],
+            'cabang'=>'required',
         ], [
             'nama.required' => 'nama wajib diisi',
             'email.required' => 'email wajib diisi',
             'email.unique' => 'email sudah terpakai',
             'no_telp.required' => 'nomor telepon wajib diisi',
             'no_telp.regex' => 'nomor telepon tidak valid',
-            'no_telp.unique' => 'nomor telepon sudah terpakai',
+            'cabang.required' => 'cabang wajib diisi',
         ]);
 
         $no_telp = $request->no_telp;
@@ -65,7 +74,7 @@ class UserController extends Controller
             'password' => Hash::make($request->email),
             'remember_token' => Str::random(60),
             'level' => "admin",
-            'poin' => 0,
+            'id_cabang' => $request->cabang,
             'notifikasi' => "on",
         ]);
         $user->save();
@@ -74,7 +83,8 @@ class UserController extends Controller
 
     public function edit($id){  
         $user = User::findorfail($id);
-        return view('user.edit', compact('user'));
+        $cabang = Cabang::all();
+        return view('user.edit', compact('user', 'cabang'));
     }
 
     public function update(Request $request, $id){  
@@ -84,11 +94,13 @@ class UserController extends Controller
             'nama'=>'required',
             'email'=>'required',
             'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/'],
+            'cabang'=>'required',
         ], [
             'nama.required' => 'nama wajib diisi',
             'email.required' => 'email wajib diisi',
             'no_telp.required' => 'nomor telepon wajib diisi',
             'no_telp.regex' => 'nomor telepon tidak valid',
+            'cabang.required' => 'cabang wajib diisi',
         ]);
 
         $no_telp = $request->no_telp;
@@ -105,14 +117,12 @@ class UserController extends Controller
             $no_telp = "62".substr(trim($no_telp), 1);
         }
 
-        $poin = User::where('id_user', $id)->first()->poin;
         $user->update($request->all());
-        $user->update(['no_telp' => $no_telp]);
+        $user->update([
+            'no_telp' => $no_telp,
+            'id_cabang' => $request->cabang,]);
         if($request->password == "on"){
             $user->update([ 'password' => Hash::make($request->email) ]);
-        }
-        if($poin != $request->poin){
-            User::where('id_user', $id)->update([ 'poin' => $request->poin ]);
         }
         return redirect('admin/user')->with('success', 'Edit Pengguna Sukses');
     }

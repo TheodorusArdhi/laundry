@@ -18,10 +18,14 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="#layanan">Layanan dan Harga</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#layanan">Layanan</a></li>
                         <li class="nav-item"><a class="nav-link" href="#pengumuman">Pengumuman</a></li>
                     </ul>
                 </div>
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end me-1">
+                <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('login/index') }}">Login</a>
+                <a class="btn btn-info fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}">Register</a>
             </div>
         </nav>
         <!-- Header-->
@@ -29,7 +33,6 @@
             <div class="container px-4 text-center">
                 <h1 class="fw-bolder">Selamat Datang ke Sinar Laundry</h1>
                 <p class="lead">Bersih, Rapi, Wangi!</p>
-                <a class="btn btn-lg btn-light" href="{{ url('login/index') }}">Login</a>
             </div>
         </header>
         <!-- layanan section-->
@@ -37,7 +40,7 @@
             <div class="container px-4">
                 <div class="row gx-4 justify-content-center">
                     <div class="col-lg-8">
-                        <h2>Layanan dan Harga</h2>
+                        <h2>Layanan</h2>
                         <div class="row">
                             @foreach ($layanan as $item)
                             <div class="col-sm-4 mb-2 mt-2 mb-sm">

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Pengumuman;
 use RealRashid\SweetAlert\Facades\Alert;
 use Session;
+use App\Models\User;
+use Carbon\Carbon;
+use App\Models\Poin;
 
 class PengumumanController extends Controller
 {
@@ -13,6 +16,8 @@ class PengumumanController extends Controller
         $pengumuman = Pengumuman::all();
         $title = 'Yakin Hapus Pengumuman ?';
         confirmDelete($title);
+
+        
         return view('pengumuman.index', compact('pengumuman'));
     }
 
@@ -31,10 +36,10 @@ class PengumumanController extends Controller
             'deskripsi'=>'required',
             'diskon'=>'required',
         ], [
-            'judul.required' => 'judul wajib diisi',
-            'judul.unique' => 'judul sudah terpakai',
-            'deskripsi.required' => 'deskripsi wajib diisi',
-            'diskon.required' => 'diskon wajib diisi',
+            'judul.required' => 'judul Wajib Diisi',
+            'judul.unique' => 'judul Sudah Terpakai',
+            'deskripsi.required' => 'deskripsi Wajib Diisi',
+            'diskon.required' => 'diskon Wajib Diisi',
         ]);
 
         $pengumuman = new Pengumuman([
@@ -44,7 +49,7 @@ class PengumumanController extends Controller
             'status' => "aktif"
         ]);
         $pengumuman->save();
-        return redirect('admin/pengumuman')->with('success', 'Tambah Pengumuman Sukses');
+        return redirect('owner/pengumuman')->with('success', 'Tambah Pengumuman Sukses');
     }
 
     public function edit($id){  
@@ -60,17 +65,40 @@ class PengumumanController extends Controller
             'deskripsi'=>'required',
             'diskon'=>'required',
         ], [
-            'judul.required' => 'judul wajib diisi',
-            'deskripsi.required' => 'deskripsi wajib diisi',
-            'diskon.required' => 'diskon wajib diisi',
+            'judul.required' => 'judul Wajib Diisi',
+            'deskripsi.required' => 'deskripsi Wajib Diisi',
+            'diskon.required' => 'diskon Wajib Diisi',
         ]);
 
         $pengumuman->update($request->all());
-        return redirect('admin/pengumuman')->with('success', 'Edit Pengumuman Sukses');
+        return redirect('owner/pengumuman')->with('success', 'Edit Pengumuman Sukses');
     }
 
     public function delete( $id){  
         $pengumuman = Pengumuman::findorfail($id)->delete();
-        return redirect('admin/pengumuman')->with('success', 'Hapus Pengumuman Sukses');
+        return redirect('owner/pengumuman')->with('success', 'Hapus Pengumuman Sukses');
+    }
+
+    public function indexSiaran(){  
+        return view('pengumuman.siaran');
+    }
+
+    public function siaran(Request $request){ 
+        $request->validate([
+            'pesan'=>'required',
+        ], [
+            'pesan.required' => 'Pesan Wajib Diisi',
+        ]);
+        // $telp = User::select('no_telp')->get();
+        // foreach($telp as $key => $value){
+        //     $temp[$key] = $value->no_telp;
+        // }
+        // $no_telp = implode(',', $temp);
+        $user = User::where('level', 'pengguna')->select('id_user')->get();
+        foreach($user as $value){
+            $WA = new WAController;
+            $WA->broadcast($value->id_user, $request->pesan);
+        }
+        return redirect('owner/pengumuman')->with('success', 'Siaran Pengumuman Sukses');
     }
 }

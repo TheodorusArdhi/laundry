@@ -35,16 +35,23 @@ class HomeController extends Controller
         });
         $bulans=[];
         $bulanTotal=[];
+        $max=[];
         foreach($data as $bulan => $value){
             $bulans[]=$bulan;
             $bulanTotal[]=$value->sum('total_tagihan');
         }
-        //dd($bulanTotal);
-        return view('dashboard', compact('transaksi', 'proses', 'diambil', 'batasWaktu', 'bulans', 'bulanTotal'));
+
+        if($bulanTotal == null){
+            $max = [0];
+        }else{
+            $max = round(max($bulanTotal), -5)+100000;
+        }
+        //dd($max);
+        return view('dashboard', compact('transaksi', 'proses', 'diambil', 'batasWaktu', 'bulans', 'max', 'bulanTotal'));
     }
 
     public function home(){ 
-        $layanan = Layanan::all();
+        $layanan = Layanan::where('status', 'aktif')->get();
         $pengumuman = Pengumuman::all();
         return view('home', compact('layanan', 'pengumuman'));
     }

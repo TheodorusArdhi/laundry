@@ -12,8 +12,8 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Cabang</h1>
-                        <a class="btn btn-success" href="{{ url('admin/cabang/create') }}" role="button">Tambah</a>
-                        <div class="card mb-4 mt-2 ">                            
+                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/cabang/create') }}" role="button">Tambah <i class="fa-solid fa-plus"></i></a>
+                        <div class="card mb-4 mt-2  fs-5">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 <a> <b class="fw-semibold"></b></a>
@@ -26,6 +26,7 @@
                                             <th>Nama</th>
                                             <th>Alamat</th>
                                             <th>Nomor Telepon</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -35,6 +36,7 @@
                                             <th>Nama</th>
                                             <th>Alamat</th>
                                             <th>Nomor Telepon</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </tfoot>
@@ -49,12 +51,19 @@
                                             <td>{{ $item -> alamat }}</td>
                                             <td>{{ $item -> no_telp }}</td>
                                             <td>
-                                                <a class="btn btn-warning" href={{ url('admin/cabang/'. $item->id_cabang.'/edit') }} role="button">Edit</a>
+                                                @if($item -> status == "aktif")
+                                                <span class="badge text-bg-success">Aktif</span>
+                                                @elseif ($item -> status == "tidak aktif")
+                                                <span class="badge text-bg-danger">Tidak Akif</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-warning" href={{ url('owner/cabang/'. $item->id_cabang.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                                 @php
-                                                    $hapus = App\Models\TransaksiDetail::where('id_transaksi', $item->id_cabang)->count();
+                                                    $hapus = App\Models\Transaksi::where('id_cabang', $item->id_cabang)->count();
                                                 @endphp
                                                 @if ($hapus == 0)
-                                                <a class="btn btn-danger" href={{ url('admin/cabang/'. $item->id_cabang.'/delete') }} data-confirm-delete="true" role="button">Hapus</a>
+                                                <a class="btn btn-danger" href={{ url('owner/cabang/'. $item->id_cabang.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa-solid fa-trash"></i></a>
                                                 @endif
                                             </td>
                                         </tr>

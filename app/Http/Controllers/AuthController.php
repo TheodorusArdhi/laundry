@@ -34,18 +34,19 @@ class AuthController extends Controller
         $request->validate([
             'nama'=>'required',
             'email'=>'required|unique:users',
-            'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/'],
+            'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/','unique:users'],
             'password'=>'required',
             'passwordConfirm'=>'required|same:password'
         ], [
-            'nama.required' => 'nama wajib diisi',
-            'email.required' => 'email wajib diisi',
-            'email.unique' => 'email sudah terpakai',
-            'no_telp.required' => 'nomor telepon wajib diisi',
-            'no_telp.regex' => 'nomor telepon tidak valid',
-            'password.required' => 'password wajib diisi',
-            'passwordConfirm.required' => 'konfirmasi password wajib diisi',
-            'passwordConfirm.same' => 'konfirmasi password tidak sama'
+            'nama.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.unique' => 'Email sudah terpakai',
+            'no_telp.required' => 'Nomor telepon wajib diisi',
+            'no_telp.regex' => 'Nomor telepon tidak valid',
+            'no_telp.unique' => 'Nomor telepon sudah terpakai',
+            'password.required' => 'Password wajib diisi',
+            'passwordConfirm.required' => 'Konfirmasi password wajib diisi',
+            'passwordConfirm.same' => 'Konfirmasi password tidak sama'
         ]);
         $no_telp = $request->no_telp;
         $valid = new WAController;
@@ -67,8 +68,8 @@ class AuthController extends Controller
             'no_telp' => $no_telp,
             'password' => Hash::make($request->password),
             'remember_token' => Str::random(60),
-            'level' => ('pengguna'),
-            'notifikasi' => ('on')
+            'level' => 'pengguna',
+            'notifikasi' => 'on'
         ]);
         $user->save();
         return redirect()->route('indexLogin')->with('success', 'Registrasi Sukses');

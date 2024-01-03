@@ -19,18 +19,19 @@
                         <div class="card shadow-lg border-0 rounded-lg ">
                             <form method="POST" action="{{ url('admin/penyimpanan/store') }}">
                                 {{ csrf_field() }} 
-                                <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <select class="form-select" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
-                                            <option selected disabled>Pilih Cabang</option>
-                                            @foreach ($cabang as $item)
-                                            <option value="{{ $item->id_cabang }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
+                                @if (Auth::user()->level == "owner")
+                                    <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
+                                    <div class="row mx-3 g-3 align-items-center">
+                                        <div class="col-3">
+                                            <select class="form-select" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
+                                                <option selected disabled>Pilih Cabang</option>
+                                                @foreach ($cabang as $item)
+                                                <option value="{{ $item->id_cabang }}">{{ $item->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-
+                                @endif
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">

@@ -27,12 +27,14 @@
                                             </div>
 
                                             <div class="mt-4 mb-0">
-                                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-block" >Login</button></div>
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-primary btn-block fw-semibold" style="font-size: 1.12rem;" >Login</button>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="{{ url('register/index') }}">Butuh akun? Daftar sekarang!</a></div>
+                                    <div class="card-footer text-start py-3">
+                                        <a class="btn btn-info fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}">Register</a>
                                     </div>
                                 </div>
                             </div>

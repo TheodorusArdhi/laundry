@@ -17,7 +17,7 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg ">
-                            <form method="POST" action="{{ url('admin/cabang/store') }}">
+                            <form method="POST" action="{{ url('owner/cabang/store') }}">
                                 {{ csrf_field() }} 
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
@@ -42,7 +42,7 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger" href="{{ url('admin/cabang') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger" href="{{ url('owner/cabang') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Tambah Cabang</button></div>
                                 </div>

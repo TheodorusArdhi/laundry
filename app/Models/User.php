@@ -21,6 +21,6 @@ class User extends Authenticateable
     ];
 
     public function cabang(){
-        return $this->belongsTo(User::class, 'id_cabang', 'id_cabang');
+        return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
     }
 }

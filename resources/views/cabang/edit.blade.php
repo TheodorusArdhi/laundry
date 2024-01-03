@@ -17,7 +17,7 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg ">
-                            <form method="POST" action="{{ url('admin/cabang/'.$cabang->id_cabang.'/update') }}">
+                            <form method="POST" action="{{ url('owner/cabang/'.$cabang->id_cabang.'/update') }}">
                                 {{ csrf_field() }} 
 
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
@@ -41,9 +41,20 @@
                                     </div>
                                 </div>
 
+                                <label for="status" class="fw-semibold form-label mx-3 mt-2 mb-0">Status</label>
+                                    <div class="row mx-3 g-3 align-items-center">
+                                        <div class="col-3">
+                                            <select class="form-select" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
+                                                <option value="{{ $cabang->status }}">{{ $cabang->status }}</option>
+                                                <option value="aktif">Aktif</option>
+                                                <option value="tidak aktif">Tidak Aktif</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                 <div class="row mx-3 g-3 mb-1 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger" href="{{ url('admin/cabang') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger" href="{{ url('owner/cabang') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Simpan</button></div>
                                 </div>

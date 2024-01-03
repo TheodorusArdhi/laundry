@@ -46,7 +46,7 @@ class LayananController extends Controller
             'status' => "aktif"
         ]);
         $layanan->save();
-        return redirect('admin/layanan')->with('success', 'Tambah Layanan Sukses');
+        return redirect('owner/layanan')->with('success', 'Tambah Layanan Sukses');
     }
 
     public function edit($id){  
@@ -56,7 +56,6 @@ class LayananController extends Controller
 
     public function update(Request $request, $id){  
         $layanan = Layanan::findorfail($id);
-        //dd($request);
         $request->validate([
             'nama'=>'required',
             'harga'=>'required',
@@ -71,11 +70,11 @@ class LayananController extends Controller
         ]);
 
         $layanan->update($request->all());
-        return redirect('admin/layanan')->with('success', 'Edit Layanan Sukses');
+        return redirect('owner/layanan')->with('success', 'Edit Layanan Sukses');
     }
 
     public function delete( $id){  
         $layanan = Layanan::findorfail($id)->delete();
-        return redirect('admin/layanan')->with('success', 'Hapus Layanan Sukses');
+        return redirect('owner/layanan')->with('success', 'Hapus Layanan Sukses');
     }
 }

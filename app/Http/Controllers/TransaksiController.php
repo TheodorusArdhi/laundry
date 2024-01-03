@@ -8,6 +8,8 @@ use App\Models\TransaksiDetail;
 use App\Models\User;
 use App\Models\Pengumuman;
 use App\Models\Layanan;
+use App\Models\Cabang;
+use App\Models\Poin;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\WAController;
 use Auth;
@@ -31,7 +33,16 @@ class TransaksiController extends Controller
             TransaksiDetail::where('id_transaksi', $delete)->delete();
             Transaksi::where('id_transaksi', $delete)->delete();
         }
-        $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_transaksi', 'desc')->get();
+
+        if(Auth::user()->level == 'owner'){
+            $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_status_transaksi', 'asc')->orderBy('id_transaksi', 'desc')->get();
+        }else{
+            $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_status_transaksi', 'asc')->orderBy('id_transaksi', 'desc')->where('id_cabang', Auth::user()->id_cabang)->get();
+        }
+
+        $currentDate = Carbon::parse(now()->format('Y-m-d'));
+
+
         return view('transaksi.index', compact('transaksi'));
     }
 
@@ -42,15 +53,18 @@ class TransaksiController extends Controller
             $noTransaksi = explode('-', Transaksi::latest()->first()->no_transaksi);
             $noTransaksiBaru = "SL".date('ymd').'-'. sprintf("%03s",$noTransaksi[1]+1);
         }
+        $id_admin = Auth::user()->id_user;
+        $id_cabang = User::where('id_user', $id_admin)->first()->id_cabang;
 
         $transaksi = new Transaksi([
-            'id_admin' => Auth::user()->id_user,
+            'id_admin' => $id_admin,
             'no_transaksi' => $noTransaksiBaru,
             'tgl_masuk' => date('Y-m-d'),
             'total_harga' => 0,
             'total_tagihan' => 0,
             'diterima' => 0,
-            'komplain' => '-',
+            'id_cabang' => $id_cabang,
+
         ]);
         $transaksi->save();
         session(['id_transaksi' => $transaksi->id_transaksi]);
@@ -108,6 +122,8 @@ class TransaksiController extends Controller
 
     public function store(Request $request){ 
         $id = Transaksi::where('no_transaksi', $request->no_transaksi)->first()->id_transaksi;
+        $id_user = Transaksi::where('no_transaksi', $request->no_transaksi)->first()->id_user;
+
         Session::flash('diterima', $request->diterima);
         if(TransaksiDetail::where('id_transaksi', $id)->count() == 0 && Transaksi::where('id_transaksi', $id)->count('id_user') == 0){
             return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');          
@@ -133,6 +149,41 @@ class TransaksiController extends Controller
         }
         $poinMasuk = ($request->total_tagihan / 100) + 100;
 
+        if($request->poin > 0){
+            $rekap_poin = Poin::where('id_user', $id_user)->where('status', 'aktif')->orderBy('tgl_tenggat', 'asc')->select('id_poin')->get();
+            $temp = $request->poin;
+            foreach($rekap_poin as $key => $value){
+                $jumlah[$key] = Poin::where('id_poin', $value->id_poin)->first()->jumlah;
+                $tanggal[$key] = Poin::where('id_poin', $value->id_poin)->first()->tgl_tenggat;
+                $id_transaksi[$key] = Poin::where('id_poin', $value->id_poin)->first()->id_transaksi;
+                $temp = $temp - $jumlah[$key];
+                Poin::where('id_poin', $value->id_poin)->update([
+                    'status' => 'tidak aktif'
+                ]);
+                if($temp == 0){
+                    break;
+                }
+                elseif($temp < 0){
+                    $temp = $temp * -1;
+                    $tanggalx = $tanggal[$key];
+                    $id_transaksix = $id_transaksi[$key];
+                    $poin = new Poin([
+                        'id_transaksi' =>$id_transaksix,
+                        'id_user' => $id_user,
+                        'jumlah' => $temp,
+                        'tgl_tenggat' => $tanggalx,
+                        'status' => "aktif"
+                    ]);
+                    $poin->save();
+                    $id_poin = Poin::where('id_transaksi', $id_transaksix)->max('id_poin');
+                    Transaksi::where('id_transaksi', $id_transaksix)->update([
+                        'id_poin' => $id_poin,
+                    ]);
+                    break;
+                }
+            }
+        }
+
         $details = TransaksiDetail::where('id_transaksi', $id)->select('id_layanan')->get();
         foreach ($details as $g => $f) {
             $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
@@ -151,13 +202,17 @@ class TransaksiController extends Controller
             'diterima' => $diterima,
             'poin_masuk' => $poinMasuk,
             'poin_keluar' => $poinKeluar,
-            'komplain' => '-',
         ];
         
         Transaksi::where('id_transaksi', $id)->update($update);
         $WA = new WAController;
         $WA->transaksi($id);
         return redirect('admin/transaksi')->with('success', 'Tambah Transaksi Sukses');
+    }
+
+    public function usePoin($id, $nominalPoin){
+        $rekap_poin = Poin::where('id_user', $id)->orderBy('tgl_tenggat', 'asc');
+        return rekap_poin;
     }
 
     public function update(Request $request, $id){ 
@@ -202,7 +257,6 @@ class TransaksiController extends Controller
             'diterima' => $diterima,
             'poin_masuk' => $poinMasuk,
             'poin_keluar' => $poinKeluar,
-            'komplain' => '-',
         ];
         Transaksi::where('id_transaksi', $id)->update($update);
         return redirect('admin/transaksi')->with('success', 'Edit Transaksi Sukses');
@@ -255,13 +309,13 @@ class TransaksiController extends Controller
             'nama.required' => 'Nama Belum Terisi',
         ]);
         Transaksi::findOrFail($request->id_transaksi)->update([ 'id_user' => $request->nama]);
-        return redirect()->route('editAdmin', $id)->with('success', 'Tambah Pengguna Sukses');
+        return redirect()->route('editAdmin', $id)->with('success', 'Edit Pengguna Sukses');
     }
 
-    public function delete($id){  
-        TransaksiDetail::where('id_transaksi', $id)->delete();
-        Transaksi::find($id)->delete();
-        return redirect('admin/transaksi')->with('success', 'Hapus Transaksi Sukses');
+    public function batal($id){  
+        Transaksi::where('id_transaksi', $id)->update(['id_status_transaksi' => 8]);
+        TransaksiDetail::where('id_transaksi', $id)->update(['jumlah' => 0, 'subtotal' => 0]);
+        return redirect('admin/transaksi')->with('success', 'Edit Status Sukses');
     }
 
     public function lunas($id){
@@ -274,23 +328,34 @@ class TransaksiController extends Controller
     }
 
     public function ambil($id){
+        $id_user = Transaksi::where('id_transaksi', $id)->first()->id_user;
+        $tgl_masuk = Transaksi::where('id_transaksi', $id)->first()->tgl_masuk;
+        $poinKeluar = Transaksi::where('id_transaksi', $id)->first()->poin_keluar;
+        $poinMasuk = Transaksi::where('id_transaksi', $id)->first()->poin_masuk;
+        $poin = new Poin([
+            'id_transaksi' =>$id,
+            'id_user' => $id_user,
+            'jumlah' => $poinKeluar + $poinMasuk,
+            'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk. ' + '. 90 .' days')),
+            'status' => "aktif"
+        ]);
+        $poin->save();
+        $id_poin = Poin::where('id_transaksi', $id)->first()->id_poin;
         Transaksi::where('id_transaksi', $id)->update([
             'id_status_transaksi' => 7,
             'tgl_ambil' => now(),
+            'id_poin' => $id_poin
         ]);
-        $id_user = Transaksi::where('id_transaksi', $id)->first()->id_user;
-        $poinKeluar = Transaksi::where('id_transaksi', $id)->first()->poin_keluar;
-        $poinMasuk = Transaksi::where('id_transaksi', $id)->first()->poin_masuk;
-        $user = User::where('id_user', $id_user);
-        $user->update([ 'poin' => $user->first()->poin - $poinKeluar + $poinMasuk]);
         return redirect('admin/transaksi')->with('success', 'Edit Status Sukses');
     }
 
-    function invoice($id){
+    public function invoice($id){
         $transaksi = Transaksi::find($id);
         $transaksiDetail = TransaksiDetail::where('id_transaksi', $id)->get();
+        $cabang = Cabang::find($transaksi->id_cabang);
         $data = ['transaksi' => $transaksi,
-         'transaksiDetail' => $transaksiDetail];
+         'transaksiDetail' => $transaksiDetail,
+         'cabang' => $cabang];
         $pdf = Pdf::loadView('transaksi.invoice', $data);
 
         $noTransaksi = Transaksi::where('id_transaksi', $id)->first()->no_transaksi;
@@ -301,6 +366,7 @@ class TransaksiController extends Controller
     function transaksiNota($id){
         $transaksi = Transaksi::find($id);
         $transaksiDetail = TransaksiDetail::where('id_transaksi', $id)->get();
-        return view('transaksi.invoice', compact('transaksi', 'transaksiDetail'));
+        $cabang = Cabang::find($transaksi->id_cabang);
+        return view('transaksi.invoice', compact('transaksi', 'transaksiDetail', 'cabang'));
     }
 }

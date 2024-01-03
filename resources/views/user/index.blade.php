@@ -12,8 +12,10 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Pengguna</h1>
-                        <a class="btn btn-success" href="{{ url('admin/user/create') }}" role="button">Tambah Admin</a>
-                        <div class="card mb-4 mt-2 ">                            
+                        @if (Auth::user()->level == "owner")
+                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user/create') }}" role="button">Tambah Admin <i class="fa-solid fa-plus"></i></a>
+                        @endif
+                        <div class="card mb-4 mt-2  fs-5">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 <a> <b class="fw-semibold"></b></a>
@@ -25,9 +27,7 @@
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Email</th>
-                                            <th>Nomor Telepon</th>
                                             <th>Peran</th>
-                                            <th>Poin</th>
                                             <th>Notifikasi</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -37,9 +37,7 @@
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Email</th>
-                                            <th>Nomor Telepon</th>
                                             <th>Peran</th>
-                                            <th>Poin</th>
                                             <th>Notifikasi</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -53,9 +51,7 @@
                                             <td>{{ $i++ }}</td>
                                             <td>{{ $item -> nama }}</td>
                                             <td>{{ $item -> email }}</td>
-                                            <td>{{ $item -> no_telp }}</td>
                                             <td>{{ $item -> level }}</td>
-                                            <td>{{ $item -> poin }}</td>
                                             <td>
                                                 @if($item -> notifikasi == "on")
                                                 <span class="badge text-bg-success">Aktif</span>
@@ -64,13 +60,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-warning" href={{ url('admin/user/'. $item->id_user.'/edit') }} role="button">Edit</a>
-                                                @php
-                                                    $hapus = App\Models\Transaksi::where('id_user', $item->id_user)->orWhere('id_admin', $item->id_user)->count();
-                                                @endphp
-                                                @if ($hapus == 0)
-                                                <a class="btn btn-danger" href={{ url('admin/user/'. $item->id_user.'/delete') }} data-confirm-delete="true" role="button">Hapus</a>
-                                                @endif
+                                                <a class="btn btn-warning" href={{ url('admin/user/'. $item->id_user.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach

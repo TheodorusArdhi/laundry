@@ -17,7 +17,7 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg ">
-                            <form method="POST" action="{{ url('admin/layanan/'.$layanan->id_layanan.'/update') }}">
+                            <form method="POST" action="{{ url('owner/layanan/'.$layanan->id_layanan.'/update') }}">
                                 {{ csrf_field() }} 
 
                                 <label for="nama" class="fw-semibold form-label mx-3 mx-3 mt-2 mb-0">Nama</label>
@@ -51,7 +51,7 @@
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
                                     <div class="col-3">
                                         <select class="form-select" name="satuan" aria-label="Default select example" value="{{ $layanan->satuan }}">
-                                            <option value="{{ $layanan->satuan }}">{{ $layanan->satuan }}</option>
+                                            <option selected value="{{ $layanan->satuan }}">{{ $layanan->satuan }}</option>
                                             <option value="kg">Kg</option>
                                             <option value="satuan">Satuan</option>
                                         </select>
@@ -71,7 +71,7 @@
 
                                 <div class="row mx-3 g-3 mb-1 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger" href="{{ url('admin/layanan') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger" href="{{ url('owner/layanan') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Simpan</button></div>
                                 </div>

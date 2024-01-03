@@ -127,7 +127,7 @@
                     yAxes: [{
                         ticks: {
                         min: 0,
-                        max: {{ round(max($bulanTotal), -5)+100000 }},
+                        max: $max,
                         maxTicksLimit: 5
                         },
                         gridLines: {

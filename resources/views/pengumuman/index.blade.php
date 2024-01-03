@@ -12,8 +12,9 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Pengumuman</h1>
-                        <a class="btn btn-success" href="{{ url('admin/pengumuman/create') }}" role="button">Tambah</a>
-                        <div class="card mb-4 mt-2 ">                            
+                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/pengumuman/create') }}" role="button">Tambah <i class="fa-solid fa-plus"></i></a>
+                        <a class="btn btn-info fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/pengumuman/index/siaran') }}" role="button">Siaran <i class="fa-solid fa-bullhorn"></i></a>
+                        <div class="card mb-4 mt-2 fs-5">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 <a> <b class="fw-semibold"></b></a>
@@ -58,12 +59,12 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-warning" href={{ url('admin/pengumuman/'. $item->id_pengumuman.'/edit') }} role="button">Edit</a>
+                                                <a class="btn btn-warning" href={{ url('owner/pengumuman/'. $item->id_pengumuman.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                                 @php
                                                     $hapus = App\Models\Transaksi::where('id_pengumuman', $item->id_pengumuman)->count();
                                                 @endphp
                                                 @if ($hapus == 0)
-                                                <a class="btn btn-danger" href={{ url('admin/pengumuman/'. $item->id_pengumuman.'/delete') }} data-confirm-delete="true" role="button">Hapus</a>
+                                                <a class="btn btn-danger" href={{ url('owner/pengumuman/'. $item->id_pengumuman.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa-solid fa-trash"></i></a>
                                                 @endif
                                             </td>
                                         </tr>

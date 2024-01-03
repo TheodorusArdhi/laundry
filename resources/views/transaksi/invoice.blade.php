@@ -97,9 +97,9 @@
         <thead>
             <tr>
                 <th colspan="4" class="text-center company-data">
-                    <h2>Sinar Laundry</h2>
-                    <span>Alamat: Grogolan, Jalan Batam NO. 9, RT 04 RW 01, Ketelan, Banjarsari, Surakarta, Jawa Tangah, 57132</span> <br>
-                    <span>Telepon: 0895339622137</span>
+                    <h2>Sinar Laundry {{ $cabang->nama }}</h2>
+                    <span>Alamat: {{ $cabang->alamat }}</span> <br>
+                    <span>Telepon: {{ $cabang->no_telp }}</span>
                 </th>
             </tr>
             <tr class="bg-primary">

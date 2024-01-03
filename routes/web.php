@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PoinController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PenyimpananController;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +32,7 @@ use App\Http\Controllers\PenyimpananController;
     Route::post('/register/store',[AuthController::class,'storeRegister'])->name('storeRegister');
     Route::get('/logout',[AuthController::class, 'logout'])->name('logout'); 
 
-Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(function () {
+Route::prefix('/owner')->middleware(['auth', 'checkLevel:owner'])->group(function () {
 
     Route::get('/layanan',[LayananController::class,'index']);
     Route::get('/layanan/create',[LayananController::class,'create']);
@@ -48,14 +49,29 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(functio
     Route::delete('/cabang/{id}/delete',[CabangController::class,'delete'])->name('delete');
 
     Route::get('/pengumuman',[PengumumanController::class,'index']);
+    Route::get('/pengumuman/index/siaran',[PengumumanController::class,'indexSiaran']);
     Route::get('/pengumuman/create',[PengumumanController::class,'create']);
     Route::post('/pengumuman/store',[PengumumanController::class,'store'])->name('store');
+    Route::post('/pengumuman/siaran',[PengumumanController::class,'siaran'])->name('siaran');
     Route::get('/pengumuman/{id}/edit',[PengumumanController::class,'edit']);
     Route::post('/pengumuman/{id}/update',[PengumumanController::class,'update'])->name('update');
     Route::delete('/pengumuman/{id}/delete',[PengumumanController::class,'delete'])->name('delete');
 
-    Route::get('/user',[UserController::class,'index']);
     Route::get('/user/create',[UserController::class,'create']);
+
+    Route::post('/penyimpanan/cabang',[PenyimpananController::class,'cabang']);
+
+    Route::get('/laporan/penjualan',[LaporanController::class,'penjualan']);
+    Route::post('/laporan/penjualan/tanggal',[LaporanController::class,'tanggalPenjualan']);
+    Route::get('/laporan/layanan',[LaporanController::class,'layanan']);
+    Route::post('/laporan/layanan/tanggal',[LaporanController::class,'tanggalLayanan']);
+    Route::get('/penjualan/export/{awal}/{akhir}',[LaporanController::class, 'penjualanExport']);
+    Route::get('/layanan/export/{awal}/{akhir}',[LaporanController::class, 'layananExport']);
+}); 
+
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(function () {
+
+    Route::get('/user',[UserController::class,'index']);
     Route::post('/user/store',[UserController::class,'store'])->name('store');
     Route::get('/user/{id}/edit',[UserController::class,'edit']);
     Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
@@ -71,22 +87,21 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(functio
     Route::post('/transaksi/poin',[TransaksiController::class,'poin'])->name('poin');
     Route::post('/transaksi/{id}/edit/poin',[TransaksiController::class,'poinEdit'])->name('poinEdit');
     Route::post('/transaksi/{id}/edit/diskon',[TransaksiController::class,'diskonEdit'])->name('diskonEdit');
-    Route::delete('/transaksi/{id}/delete',[TransaksiController::class,'delete'])->name('delete');
+    Route::get('/transaksi/{id}/batal',[TransaksiController::class,'batal'])->name('batal');
     Route::get('/transaksi/{id}/lunas',[TransaksiController::class,'lunas']);
     Route::get('/transaksi/{id}/ambil',[TransaksiController::class,'ambil']);
 
     Route::post('/transaksi/detail/store',[TransaksiDetailController::class,'store'])->name('store');
-    Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
     Route::post('/transaksi/detail/{id}/update',[TransaksiDetailController::class,'update'])->name('update');
-    Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
     Route::delete('/transaksi/detail/{id}/delete',[TransaksiDetailController::class,'delete'])->name('delete');
+    Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
+    Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
     Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');
 
     Route::get('/poin',[PoinController::class,'indexAdmin']);
     Route::post('/poin/user',[PoinController::class,'poin']);
 
     Route::get('/penyimpanan',[PenyimpananController::class,'index']);
-    Route::post('/penyimpanan/cabang',[PenyimpananController::class,'cabang']);
     Route::get('/penyimpanan/create',[PenyimpananController::class,'create']);
     Route::post('/penyimpanan/store',[PenyimpananController::class,'store'])->name('store');
     Route::get('/penyimpanan/{id}/edit',[PenyimpananController::class,'edit']);
@@ -101,7 +116,7 @@ Route::prefix('/user')->middleware(['auth', 'checkLevel:pengguna'])->group(funct
     Route::get('/poin',[PoinController::class,'indexUser']);
 }); 
 
-Route::middleware(['auth', 'checkLevel:pengguna,admin'])->group(function () {
+Route::middleware(['auth', 'checkLevel:pengguna,admin,owner'])->group(function () {
 
     Route::get('/dashboard',[HomeController::class,'dashboard']);
     Route::get('/password',[AuthController::class,'indexPassword']);

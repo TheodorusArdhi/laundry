@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('transaksi:statusUpdate')->everyMinute();
+        $schedule->command('reminder:customerReminder')->everyMinute();
     }
 
     /**

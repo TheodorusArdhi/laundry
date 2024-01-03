@@ -44,12 +44,19 @@
                                     </div>
                                 </div>
 
-                                <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <input type="text" id="poin" class="form-control" name="poin" value="{{ $user->poin }}" />
+                                @if($user->id_cabang != null)
+                                    <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
+                                    <div class="row mx-3 g-3 align-items-center">
+                                        <div class="col-3">
+                                            <select class="form-select" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
+                                                <option value="{{ $user->id_cabang }}">{{ $user->cabang->nama }}</option>
+                                                @foreach ($cabang as $item)
+                                                    <option value="{{ $item->id_cabang }}">{{ $item->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
 
                                 <label for="password" class="fw-semibold form-label mx-3 mt-2 mb-0">Password</label>
                                 <div class="row mx-3 g-3 align-items-center">

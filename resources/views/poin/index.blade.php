@@ -10,20 +10,27 @@
             @include('template.sideNav')
             <div id="layoutSidenav_content">
                 <main>
-                    <div class="container-fluid px-4">
-                        @if (Auth::user()->level == "admin")
+                    <div class="container-fluid px-4 fs-5">
                         <h1 class="mt-4">Poin</h1>
+                        @if (Auth::user()->level != "pengguna")
                             <form method="POST" action="{{ url('admin/poin/user') }}">
                                 {{ csrf_field() }} 
-                                <label for="nama" class="fw-semibold form-label mt-2 mb-0">Nama Pengguna</label>
+                                <label for="nama" class="fw-semibold form-label mb-0">Nama Pengguna</label>
                                 <div class="row g-3 align-items-center">
                                     <div class="col-3">
-                                        <select class="form-control select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}">
-                                                <option selected >{{ $user }}</option>
-                                                <option value="semua" >Semua</option>
+                                        <select class="form-control form-control-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}">      
+                                            @if ($user == "Semua")
+                                                <option selected disabled>{{ $user }}</option>
                                                 @foreach ($pengguna as $item)
                                                 <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
                                                 @endforeach
+                                            @else
+                                                <option value="{{ $user->id_user }}">{{ $user->nama }}</option>
+                                                <option value="Semua" >Semua</option>
+                                                @foreach ($pengguna as $item)
+                                                <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="col-3">
@@ -31,13 +38,19 @@
                                     </div> 
                                 </div>
                             </form>
+                            @if ($user != "Semua")
+                            <h5 class="mb-2">Poin : {{ $sum }} </h5>
+                            @endif
                         @else
-                        <h1 class="mt-4">Poin : {{ $user->poin }}</h1>
+                        @php
+                            $poinUser = $poin->sum('jumlah');
+                        @endphp
+                        <h5 class="mb-2">Poin : {{ $poinUser }} </h5>
                         @endif
-                        <div class="card mb-4 mt-2 ">                            
+                        <div class="card mb-4 mt-4 ">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                <a> <b class="fw-semibold"></b></a>
+                                <a> <b class="fw-semibold">Riwayat Poin Transaksi</b></a>
                             </div>                            
                             <div class="card-body  ">
                                 <table id="datatablesSimple">
@@ -46,9 +59,8 @@
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Nomor Transaksi</th>
-                                            <th>Tanggal Masuk</th>
-                                            <th>Poin Masuk</th>
-                                            <th>Poin Keluar</th>
+                                            <th>Tanggal Tenggat</th>
+                                            <th>Poin</th>
                                         </tr>
                                     </thead>
                                     <tfoot >
@@ -56,25 +68,21 @@
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Nomor Transaksi</th>
-                                            <th>Tanggal Masuk</th>
-                                            <th>Poin Masuk</th>
-                                            <th>Poin Keluar</th>
+                                            <th>Tanggal Tenggat</th>
+                                            <th>Poin</th>
                                         </tr>
                                     </tfoot>
                                     <?php
                                         $i=1;
-                                        $sumPoinMasuk=0;
-                                        $sumPoinKeluar=0;
                                     ?>
                                     <tbody >
                                         @foreach ($poin as $item)
                                         <tr>
                                             <th>{{ $i++ }}</th>
                                             <th>{{ $item -> user -> nama }}</th>
-                                            <th>{{ $item -> no_transaksi }}</th>
-                                            <th>{{ $item -> tgl_masuk -> translatedFormat('l, d F Y')}}</th>
-                                            <th>{{ $item -> poin_masuk }}</th>
-                                            <th>{{ $item -> poin_keluar }}</th>
+                                            <th>{{ $item -> transaksi -> no_transaksi }}</th>
+                                            <th>{{ $item -> tgl_tenggat -> translatedFormat('l, d F Y')}}</th>
+                                            <th>{{ $item -> jumlah }}</th>
                                         </tr>
                                         @endforeach
                                     </tbody>

@@ -38,6 +38,21 @@
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
                                         <input type="text" id="no_telp" class="form-control" name="no_telp" value="{{ Session::get('no_telp') }}" />
+                                        <div id="no_telp" class="form-text">
+                                            Masukkan nomor tanpa spasi
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
+                                <div class="row mx-3 g-3 align-items-center">
+                                    <div class="col-3">
+                                        <select class="form-select" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
+                                            <option selected disabled>Pilih Cabang</option>
+                                            @foreach ($cabang as $item)
+                                                <option value="{{ $item->id_cabang }}">{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

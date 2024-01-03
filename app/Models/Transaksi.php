@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Status;
 use App\Models\Pengumuman;
 use App\Models\Cabang;
+use App\Models\Poin;
 
 class Transaksi extends Model
 {
@@ -18,7 +19,7 @@ class Transaksi extends Model
     protected $table = 'transaksi';
     protected $primaryKey = 'id_transaksi';
     protected $fillable = [
-        'id_admin', 'id_user', 'id_status_pembayaran', 'id_status_transaksi', 'id_pengumuman', 'id_cabang', 'no_transaksi', 'tgl_masuk', 'tgl_selesai', 'tgl_ambil', 'tgl_tenggat', 'total_harga', 'diskon', 'total_tagihan', 'diterima', 'komplain'
+        'id_admin', 'id_user', 'id_status_pembayaran', 'id_status_transaksi', 'id_pengumuman', 'id_cabang', 'id_poin', 'no_transaksi', 'tgl_masuk', 'tgl_selesai', 'tgl_ambil', 'tgl_tenggat', 'total_harga', 'diskon', 'total_tagihan', 'diterima', 'komplain'
     ];
 
     public function user(){
@@ -43,5 +44,9 @@ class Transaksi extends Model
 
     public function cabang(){
         return $this->belongsTo(Cabang::class, 'id_cabang', 'id_cabang');
+    }
+
+    public function poin(){
+        return $this->belongsTo(Poin::class, 'id_poin', 'id_poin');
     }
 }

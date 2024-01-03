@@ -30,6 +30,9 @@
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" name="no_telp" type="text" placeholder="Nomor Telepon" value="{{ Session::get('no_telp') }}"/>
                                                 <label for="noTelp">Nomor Telepon</label>
+                                                <div id="no_telp" class="form-text">
+                                                    Masukkan nomor tanpa spasi
+                                                </div>
                                             </div>
                                             
                                             <div class="row mb-3">
@@ -48,12 +51,12 @@
                                             </div>
 
                                             <div class="mt-4 mb-0">
-                                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-block" >Buat Akun</button></div>
+                                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-block fw-semibold" style="font-size: 1.12rem;" >Daftar</button></div>
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="{{ url('login/index') }}">Punya akun? Login sekarang!</a></div>
+                                    <div class="card-footer text-start py-3">
+                                        <a class="btn btn-info fw-semibold" style="font-size: 1.12rem;" href="{{ url('login/index') }}">Login</a>
                                     </div>
                                 </div>
                             </div>
