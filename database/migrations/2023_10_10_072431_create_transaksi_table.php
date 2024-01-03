@@ -32,7 +32,6 @@ return new class extends Migration
             $table->integer('poin_keluar')->default(0);
             $table->integer('total_tagihan');
             $table->integer('diterima')->nullable();
-            $table->text('komplain');
             $table->timestamps();
 
             $table->foreign('id_user')->references('id_user')->on('users');
