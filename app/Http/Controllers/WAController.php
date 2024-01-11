@@ -299,8 +299,8 @@ Sinar Laundry ".$cabang,
       'message' => "Halo ".$nama."!
 
 Terima kasih telah memilih Sinar Laundry. Kami harap anda puas dengan layanan kami.
-Pada transaksi ".$no_transaksi." anda mendapatkan poin sebanyak ".$poin." yang dapat anda manfaatkan untuk potongan harga pada transaksi berikutnya.
-Kami menantikan untuk melayani anda kembali. Jangan lupa untuk mengunjungi website kami untuk melihat data diri, perolehan poin, dan riwayat transaksi anda!.
+Pada transaksi ".$no_transaksi.", anda mendapatkan poin sebanyak ".$poin." yang dapat anda manfaatkan untuk potongan harga pada transaksi berikutnya.
+Kami menantikan untuk melayani anda kembali. Jangan lupa kunjungi website kami untuk melihat data diri, perolehan poin, dan riwayat transaksi anda!.
 .$linkweb.
 
 Sinar Laundry ".$cabang,

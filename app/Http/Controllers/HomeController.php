@@ -9,6 +9,7 @@ use App\Models\Pengumuman;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\Status;
+use App\Models\Cabang;
 use Session;
 Use Illuminate\Support\Facades\Hash;
 use Auth;
@@ -35,25 +36,25 @@ class HomeController extends Controller
         });
         $bulans=[];
         $bulanTotal=[];
-        $max=[];
+        //$max=[];
         foreach($data as $bulan => $value){
             $bulans[]=$bulan;
             $bulanTotal[]=$value->sum('total_tagihan');
         }
 
-        if($bulanTotal == null){
-            $max = [0];
-        }else{
-            $max = round(max($bulanTotal), -5)+100000;
-        }
-        //dd($max);
-        return view('dashboard', compact('transaksi', 'proses', 'diambil', 'batasWaktu', 'bulans', 'max', 'bulanTotal'));
+        // if($bulanTotal == null){
+        //     $max = [0];
+        // }else{
+        //     $max = round(max($bulanTotal), -5)+100000;
+        // }
+        return view('dashboard', compact('transaksi', 'proses', 'diambil', 'batasWaktu', 'bulans', 'bulanTotal'));
     }
 
     public function home(){ 
         $layanan = Layanan::where('status', 'aktif')->get();
-        $pengumuman = Pengumuman::all();
-        return view('home', compact('layanan', 'pengumuman'));
+        $pengumuman = Pengumuman::where('status', 'aktif')->get();
+        $cabang = Cabang::where('status', 'aktif')->get();
+        return view('home', compact('layanan', 'pengumuman', 'cabang'));
     }
 
 }

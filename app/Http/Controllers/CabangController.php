@@ -52,8 +52,8 @@ class CabangController extends Controller
         $cabang = new Cabang([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
-            'no_telp' =>$no_telp,
-            'status' =>"aktif"
+            'no_telp' => $no_telp,
+            'status' => "aktif"
         ]);
         $cabang->save();
         return redirect('owner/cabang')->with('success', 'Tambah Cabang Sukses');
@@ -66,7 +66,6 @@ class CabangController extends Controller
 
     public function update(Request $request, $id){  
         $cabang = Cabang::findorfail($id);
-        //dd($request);
         $request->validate([
             'nama'=>'required',
             'alamat'=>'required',
@@ -96,8 +95,8 @@ class CabangController extends Controller
         return redirect('owner/cabang')->with('success', 'Edit Cabang Sukses');
     }
 
-    public function delete( $id){  
-        $cabang = Cabang::findorfail($id)->delete();
+    public function delete($id){  
+        Cabang::find($id)->delete();
         return redirect('owner/cabang')->with('success', 'Hapus Cabang Sukses');
     }
 }

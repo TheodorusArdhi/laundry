@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\WAController;
 use App\Models\Poin;
 use App\Models\Transaksi;
+use App\Models\User;
 
 class Reminder extends Command
 {
@@ -37,7 +38,8 @@ class Reminder extends Command
         foreach ($poin as $value){
             $tgl_tenggat = Carbon::parse($value->tgl_tenggat)->subDays(14);
             $hari = $currentDate->diffInDays($tgl_tenggat, false);
-            if($hari <= 0){
+            $notifikasi = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari <= 0 && $notifikasi == "on"){
                 $WA = new WAController;
                 $WA->poinReminder($value->id_poin);
             }
@@ -47,7 +49,8 @@ class Reminder extends Command
         foreach ($kunjungan as $value){
             $tgl_masuk = Carbon::parse($value->tgl_masuk)->addDays(30);
             $hari = $currentDate->diffInDays($tgl_masuk, false);
-            if($hari <= 0 && $hari >= -7){
+            $notifikasi = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari <= 0 && $hari >= -7 && $notifikasi == "on"){
                 $WA = new WAController;
                 $WA->kunjunganReminder($value->id_transaksi);
             }

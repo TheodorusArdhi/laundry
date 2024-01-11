@@ -73,8 +73,8 @@ class LayananController extends Controller
         return redirect('owner/layanan')->with('success', 'Edit Layanan Sukses');
     }
 
-    public function delete( $id){  
-        $layanan = Layanan::findorfail($id)->delete();
+    public function delete($id){  
+        Layanan::find($id)->delete();
         return redirect('owner/layanan')->with('success', 'Hapus Layanan Sukses');
     }
 }

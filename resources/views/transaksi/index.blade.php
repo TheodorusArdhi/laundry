@@ -13,7 +13,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Transaksi</h1>
                         @if (Auth::user()->level == "admin")
-                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi/data') }}" role="button">Tambah <i class="fa-solid fa-plus"></i></a>
+                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi/data') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Transaksi">Tambah <i class="fa-solid fa-plus"></i></a>
                         @endif
                         <div class="card mb-4 mt-2 fs-5">                            
                             <div class="card-header">
@@ -77,12 +77,12 @@
                                             </td>
                                             <td>
                                             @if(auth()->user()->level=="admin" || auth()->user()->level=="owner")
-                                                <a class="btn btn-warning" href={{ url('admin/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                                <a class="btn btn-laundry" href={{ url('admin/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Lihat Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             @endif
                                             @if(auth()->user()->level=="pengguna")
-                                                <a class="btn btn-warning" href={{ url('user/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                                <a class="btn btn-laundry" href={{ url('user/transaksi/'. $item->id_transaksi.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Lihat Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             @endif
-                                            <a class="btn btn-info" href={{ url('transaksiNota', $item->id_transaksi) }} role="button">Nota</a>
+                                            {{--  <a class="btn btn-info" href={{ url('transaksiNota', $item->id_transaksi) }} role="button">Nota</a>  --}}
                                             </td>
                                         </tr>
                                         @endforeach

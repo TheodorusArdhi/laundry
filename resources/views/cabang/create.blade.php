@@ -16,35 +16,38 @@
                             <li class="breadcrumb-item active">Tambah Cabang</li>
                         </ol>
                         @include('template.validate')
-                        <div class="card shadow-lg border-0 rounded-lg ">
+                        <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('owner/cabang/store') }}">
                                 {{ csrf_field() }} 
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control" name="nama" value="{{ Session::get('nama') }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Cabang" value="{{ Session::get('nama') }}" />
                                     </div>
                                 </div>
 
                                 <label for="alamat" class="fw-semibold form-label mx-3 mt-2 mb-0">Alamat</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="alamat" class="form-control" name="alamat" value="{{ Session::get('alamat') }}" />
+                                        <input type="text" id="alamat" class="form-control form-control-lg" name="alamat" placeholder="Masukkan Alamat Cabang" value="{{ Session::get('alamat') }}" />
                                     </div>
                                 </div>
 
                                 <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="no_telp" class="form-control" name="no_telp" value="{{ Session::get('no_telp') }}" />
+                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Masukkan Nomor Telepon Cabang" value="{{ Session::get('no_telp') }}" />
+                                        <div id="no_telp" class="form-text">
+                                            Masukkan nomor tanpa spasi
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger" href="{{ url('owner/cabang') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/cabang') }}" role="button">Kembali</a>
                                     </div>
-                                    <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Tambah Cabang</button></div>
+                                    <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Cabang">Simpan</button></div>
                                 </div>
                             </form>
                         </div>

@@ -13,7 +13,6 @@ use App\Models\Layanan;
 class TransaksiDetailController extends Controller
 {
     public function store(Request $request){  
-        
         $request->validate([
             'layanan'=>'required',
             'jumlah'=>'required|gt:0',

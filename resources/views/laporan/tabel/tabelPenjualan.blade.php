@@ -5,10 +5,11 @@
             $akhir = Carbon\Carbon::createFromFormat('Y-m-d', $akhir)->format('d-m-Y');
         @endphp
         <tr >
-            <th class="text-center" colspan="6">Laporan Penjualan {{ $awal }} - {{ $akhir }}</th>
+            <th class="text-center" colspan="7">Laporan Penjualan {{ $awal }} - {{ $akhir }}</th>
         </tr>
         <tr>
             <th>Nomor Transaksi</th>
+            <th>Cabang</th>
             <th>Tanggal Masuk</th>
             <th>Total Harga</th>
             <th>Diskon</th>
@@ -26,7 +27,8 @@
         @foreach ($penjualan as $item ) 
         <tr >                                       
             <th>{{$item -> no_transaksi}}</th>
-            <th>{{$item -> tgl_masuk -> format('d-m-Y')}}</th>
+            <th>{{ $item -> cabang -> nama }}</th>
+            <th>{{$item -> tgl_masuk -> translatedFormat('l, d F Y') }}</th>
             <th>{{rupiah($item -> total_harga)}}</th>
             @php
                 $diskon = $item -> total_harga*$item -> diskon/100;
@@ -47,7 +49,7 @@
         ?>
         @endforeach
         <tr class="table-secondary">
-            <th colspan="2" class="text-center">Total Keseluruhan</th>
+            <th colspan="3" class="text-center">Total Keseluruhan</th>
             <th>{{rupiah($totalTotalHarga)}}</th>
             <th>{{rupiah($totalDiskon)}}</th>
             <th>{{rupiah($totalPoin)}}</th>

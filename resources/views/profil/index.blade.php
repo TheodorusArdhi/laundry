@@ -12,36 +12,44 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Profil</h1>
-                        <div class="card shadow-lg border-0 rounded-lg ">
+                        @include('template.validate')
+                        <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <div class="card-body">
-                                @include('template.validate')
                                 <form method="POST" action="{{ url('profil/update') }}">
                                     {{ csrf_field() }} 
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" name="nama" type="text" value="{{ $user->nama }}" />
-                                        <label for="nama">Nama</label>
+
+                                    <label for="nama" class="fw-semibold form-label mb-0">Nama</label>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-3">
+                                            <input type="text" id="nama" class="form-control form-control-lg" name="nama" value="{{ $user->nama }}" />
+                                        </div>
+                                    </div>
+    
+                                    <label for="email" class="fw-semibold form-label mt-2 mb-0">Email</label>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-3">
+                                            <input type="email" id="email" class="form-control form-control-lg" name="email" value="{{ $user->email }}" />
+                                        </div>
+                                    </div>
+    
+                                    <label for="no_telp" class="fw-semibold form-label mt-2 mb-0">Nomor Telepon</label>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-3">
+                                            <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" value="{{ $user->no_telp }}" />
+                                            <div id="no_telp" class="form-text">
+                                                Masukkan nomor tanpa spasi
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" name="email" type="email" value="{{ $user->email }}" />
-                                        <label for="email">Email</label>
-                                    </div>
-
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" name="no_telp" type="text" value="{{ $user->no_telp }}" />
-                                        <label for="noTelp">Nomor Telepon</label>
-                                    </div>
-
-                                    <div class="mb-3 form-check form-switch">
+                                    <div class="mb-3 mt-3 form-check form-switch">
                                         <input class="form-check-input" value="on" name="notifikasi" type="checkbox" role="switch" id="notifikasi" {{  ($user->notifikasi == "on" ? ' checked' : '') }}>
                                         <label class="form-check-label" for="notifikasi">Notifikasi WhatsApp</label>
                                     </div>
 
                                     <div class="mt-4 mb-0">
-                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a type="submit" class="btn btn-success btn-block" href="{{ url('password') }}" >Ubah Password</a>
-                                            <button type="submit" class="btn btn-primary btn-block" >Simpan</button>
-                                        </div>
+                                        <a type="submit" class="btn btn-secondary btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="v" href="{{ url('password') }}" >Ubah Password</a>
+                                        <button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Profil">Simpan</button>
                                     </div>
                                 </form>
                                 @include('sweetalert::alert')

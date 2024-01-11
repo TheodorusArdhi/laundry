@@ -13,7 +13,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Pengguna</h1>
                         @if (Auth::user()->level == "owner")
-                        <a class="btn btn-success fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user/create') }}" role="button">Tambah Admin <i class="fa-solid fa-plus"></i></a>
+                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Admin">Tambah Admin <i class="fa-solid fa-plus"></i></a>
                         @endif
                         <div class="card mb-4 mt-2  fs-5">                            
                             <div class="card-header">
@@ -60,7 +60,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-warning" href={{ url('admin/user/'. $item->id_user.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                                <a class="btn btn-laundry" href={{ url('admin/user/'. $item->id_user.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Lihat Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach

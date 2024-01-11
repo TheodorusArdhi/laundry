@@ -16,28 +16,28 @@
                             <li class="breadcrumb-item active">Edit Pengguna</li>
                         </ol>
                         @include('template.validate')
-                        <div class="card shadow-lg border-0 rounded-lg ">
+                        <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('admin/user/'. $user->id_user.'/update') }}">
                                 {{ csrf_field() }} 
 
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control" name="nama" value="{{ $user->nama }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Pengguna" value="{{ $user->nama }}" />
                                     </div>
                                 </div>
 
                                 <label for="email" class="fw-semibold form-label mx-3 mt-2 mb-0">Email</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="email" id="email" class="form-control" name="email" value="{{ $user->email }}" />
+                                        <input type="email" id="email" class="form-control form-control-lg" placeholder="Masukkan Email Pengguna" name="email" value="{{ $user->email }}" />
                                     </div>
                                 </div>
 
                                 <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="no_telp" class="form-control" name="no_telp" value="{{ $user->no_telp }}" />
+                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Masukkan Nomor Telepon Pengguna" value="{{ $user->no_telp }}" />
                                         <div id="no_telp" class="form-text">
                                             Masukkan nomor tanpa spasi
                                         </div>
@@ -48,7 +48,7 @@
                                     <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
                                     <div class="row mx-3 g-3 align-items-center">
                                         <div class="col-3">
-                                            <select class="form-select" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
+                                            <select class="form-select form-select-lg" name="cabang" aria-label="Default select example" value="{{ Session::get('cabang') }}">
                                                 <option value="{{ $user->id_cabang }}">{{ $user->cabang->nama }}</option>
                                                 @foreach ($cabang as $item)
                                                     <option value="{{ $item->id_cabang }}">{{ $item->nama }}</option>
@@ -68,9 +68,9 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger" href="{{ url('admin/user') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user') }}" role="button">Kembali</a>
                                     </div>
-                                    <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Simpan</button></div>
+                                    <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Pengguna">Simpan</button></div>
                                 </div>
                             </form>
                         </div>

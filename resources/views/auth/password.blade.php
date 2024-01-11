@@ -42,7 +42,7 @@
 
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                                 <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('profil') }}">Kembali</a>
-                                                <button type="submit" class="btn btn-primary fw-semibold" style="font-size: 1.12rem;" >Ubah Password</button>
+                                                <button type="submit" class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" role="button" data-toggle="tooltip" data-placement="top" title="Ubah Password">Ubah Password</button>
                                             </div>
                                         </form>
                                     </div>

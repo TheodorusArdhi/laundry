@@ -62,7 +62,7 @@
                                         </span>
                                     </div>
                                     <div class="col-3">
-                                        <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Cek</button></div>
+                                        <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Pengguna">Cek</button></div>
                                     </div> 
                                 </div>
                             </form>
@@ -85,13 +85,13 @@
                                     <div class="col-3 mx-3">
                                     <label for="jumlah" class="fw-semibold form-label mt-2 mb-0">Jumlah</label>
                                         <div class="col">
-                                            <input type="number" step="any" id="jumlah" class="form-control form-control-lg" name="jumlah" value="{{ Session::get('jumlah') }}"/>
+                                            <input type="number" step="any" id="jumlah" class="form-control form-control-lg" placeholder="Masukkan Jumlah Layanan" name="jumlah" value="{{ Session::get('jumlah') }}"/>
                                         </div>
                                     </div>
 
                                     <input type="hidden" name="no_transaksi"  value="{{ $transaksi->no_transaksi }}" />
-                                    <div class="col-3">
-                                        <div class="col-auto "><button type="submit" class="btn btn-primary btn-block" >Tambah</button></div>
+                                    <div class="col-auto align-self-end mb-1">
+                                        <div class="col-auto "><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Layanan">Tambah</button></div>
                                     </div>
                                 </div>
                             </form>
@@ -139,8 +139,8 @@
                                                     <td><input type="number" step="any" id="jumlah" class="form-control" name="jumlah" value="{{ $item -> jumlah }}"</td>
                                                     <td>{{ rupiah($item -> subtotal) }}</td>
                                                     <td>
-                                                        <button type="submit" class="btn btn-warning btn-block" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                                        <a class="btn btn-danger" href={{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa-solid fa-trash"></i></a>
+                                                        <button type="submit" class="btn btn-laundry btn-block" data-toggle="tooltip" data-placement="top" title="Edit Layanan"><i class="fa-solid fa-pen"></i></button>
+                                                        <a class="btn btn-danger" href={{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus Layanan"><i class="fa-solid fa-trash"></i></a>
                                                     </td>
                                                 </form>
                                             </tr>
@@ -153,9 +153,7 @@
                             <label for="total_harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Total Harga</label>
                             <div class="row mx-3 g-3 align-items-center">
                                 <div class="col-3">
-                                    <input type="hidden" id="total_tagihan_ori"  class="form-control" name="total_tagihan_ori" value="{{ $transaksi->total_tagihan }}"/>                                           
                                     <input type="text" id="total_harga_show" disabled class="form-control form-control-lg" name="total_harga_show"  value="Rp{{ number_format($transaksi->total_harga, 0, ".", ".")}}"/>
-                                    <input type="hidden" id="total_harga" class="form-control" name="total_harga"  value="{{ $transaksi->total_harga }}"/>
                                 </div>
                             </div>
 
@@ -181,7 +179,7 @@
                                         </select>
                                     </div>
                                     <div class="col-3">
-                                        <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Cek</button></div>
+                                        <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Diskon">Cek</button></div>
                                     </div>    
                                 </div>     
                             </form>
@@ -233,9 +231,9 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                        <a class="btn btn-danger" href="{{ url('admin/transaksi') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi') }}" role="button">Kembali</a>
                                     </div>
-                                    <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Tambah Transaksi</button></div>
+                                    <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Transaksi">Simpan</button></div>
                                 </div>
                             </form>
                         </div>

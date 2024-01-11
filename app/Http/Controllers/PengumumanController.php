@@ -74,8 +74,8 @@ class PengumumanController extends Controller
         return redirect('owner/pengumuman')->with('success', 'Edit Pengumuman Sukses');
     }
 
-    public function delete( $id){  
-        $pengumuman = Pengumuman::findorfail($id)->delete();
+    public function delete($id){  
+        Pengumuman::find($id)->delete();
         return redirect('owner/pengumuman')->with('success', 'Hapus Pengumuman Sukses');
     }
 

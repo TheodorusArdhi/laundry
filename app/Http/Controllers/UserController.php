@@ -22,7 +22,7 @@ class UserController extends Controller
     }
 
     public function indexAdmin(){  
-        $pengguna = User::whereNot('id_user', Auth::user()->id_user)->where('level', 'pengguna')->where('id_cabang', Auth::user()->id_cabang)->get();
+        $pengguna = User::whereNot('id_user', Auth::user()->id_user)->where('level', 'pengguna')->get();
         $title = 'Yakin Hapus Pengguna?';
         confirmDelete($title);
         return view('user.index', compact('pengguna'));
@@ -88,20 +88,25 @@ class UserController extends Controller
     }
 
     public function update(Request $request, $id){  
-        //dd($request);
         $user = User::findorfail($id);
         $request->validate([
             'nama'=>'required',
             'email'=>'required',
             'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/'],
-            'cabang'=>'required',
         ], [
             'nama.required' => 'nama wajib diisi',
             'email.required' => 'email wajib diisi',
             'no_telp.required' => 'nomor telepon wajib diisi',
             'no_telp.regex' => 'nomor telepon tidak valid',
-            'cabang.required' => 'cabang wajib diisi',
         ]);
+
+        if (Auth::user()->level == "owner"){
+            $request->validate([
+                'cabang'=>'required',
+            ], [
+                'cabang.required' => 'cabang wajib diisi',
+            ]);
+        }
 
         $no_telp = $request->no_telp;
         $valid = new WAController;
@@ -128,7 +133,7 @@ class UserController extends Controller
     }
 
     public function delete($id){  
-        $user = User::findorfail($id)->delete();
+        User::find($id)->delete();
         return redirect('admin/user')->with('success', 'Hapus Pengguna Sukses');
     }
 }

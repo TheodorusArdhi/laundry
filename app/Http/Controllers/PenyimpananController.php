@@ -14,6 +14,7 @@ class PenyimpananController extends Controller
     public function index(){  
         $title = 'Yakin Hapus Barang?';
         confirmDelete($title);
+
         $branch = 'Semua';
         $cabang = Cabang::all();
         if(Auth::user()->level == "owner"){
@@ -123,8 +124,8 @@ class PenyimpananController extends Controller
         return redirect('admin/penyimpanan')->with('success', 'Edit Penyimpanan Sukses');
     }
 
-    public function delete( $id){  
-        $penyimpanan = Penyimpanan::findorfail($id)->delete();
+    public function delete($id){  
+        Penyimpanan::find($id)->delete();
         return redirect('admin/penyimpanan')->with('success', 'Hapus Penyimpanan Sukses');
     }
 }

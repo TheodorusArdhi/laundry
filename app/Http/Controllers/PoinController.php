@@ -14,7 +14,7 @@ class PoinController extends Controller
         $user = 'Semua';
         $pengguna = User::where("level", "pengguna")->get();
         //$transaksi = Transaksi::orderBy('id_transaksi', 'desc')->where('id_status_transaksi', 7)->get();
-        $poin = Poin::where('status', 'aktif')->orderBy('tgl_tenggat', 'asc')->get();
+        $poin = Poin::where('status', 'aktif')->orderBy('id_user', 'asc')->orderBy('tgl_tenggat', 'asc')->get();
         return view('poin.index', compact('poin', 'user', 'pengguna'));
     }
 
@@ -29,6 +29,7 @@ class PoinController extends Controller
         if($request->nama == "Semua"){
             return redirect('admin/poin');          
         }
+
         $user = User::find($request->nama);
         $pengguna = User::where("level", "pengguna")->get();
         $transaksi = Transaksi::orderBy('id_transaksi', 'desc')->where('id_status_transaksi', 7)->where('id_user', $request->nama)->get();

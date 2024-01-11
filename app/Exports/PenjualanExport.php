@@ -22,7 +22,7 @@ class PenjualanExport implements FromView, ShouldAutoSize
     */
     public function view(): View
     {
-        $penjualan = Transaksi::whereBetween('tgl_masuk', [$this->awal, $this->akhir])->get();
+        $penjualan = Transaksi::where('id_status_transaksi', '<', 8)->whereBetween('tgl_masuk', [$this->awal, $this->akhir])->get();
         return view('laporan.tabel.tabelPenjualan', [
             'penjualan' => $penjualan,
             'awal' => $this->awal,

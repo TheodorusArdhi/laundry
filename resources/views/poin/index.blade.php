@@ -20,7 +20,7 @@
                                     <div class="col-3">
                                         <select class="form-control form-control-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}">      
                                             @if ($user == "Semua")
-                                                <option selected disabled>{{ $user }}</option>
+                                                <option selected value="Semua">{{ $user }}</option>
                                                 @foreach ($pengguna as $item)
                                                 <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
                                                 @endforeach
@@ -34,12 +34,12 @@
                                         </select>
                                     </div>
                                     <div class="col-3">
-                                        <div class="col-auto"><button type="submit" class="btn btn-primary btn-block" >Cek</button></div>
+                                        <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Pengguna">Cek</button></div>
                                     </div> 
                                 </div>
                             </form>
                             @if ($user != "Semua")
-                            <h5 class="mb-2">Poin : {{ $sum }} </h5>
+                            <h5 class="mb-2 mt-1">Poin : {{ $sum }} </h5>
                             @endif
                         @else
                         @php

@@ -39,10 +39,6 @@ class TransaksiController extends Controller
         }else{
             $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_status_transaksi', 'asc')->orderBy('id_transaksi', 'desc')->where('id_cabang', Auth::user()->id_cabang)->get();
         }
-
-        $currentDate = Carbon::parse(now()->format('Y-m-d'));
-
-
         return view('transaksi.index', compact('transaksi'));
     }
 
@@ -53,6 +49,7 @@ class TransaksiController extends Controller
             $noTransaksi = explode('-', Transaksi::latest()->first()->no_transaksi);
             $noTransaksiBaru = "SL".date('ymd').'-'. sprintf("%03s",$noTransaksi[1]+1);
         }
+        //dd(Transaksi::where('tgl_masuk', date('Y-m-d'))->count());
         $id_admin = Auth::user()->id_user;
         $id_cabang = User::where('id_user', $id_admin)->first()->id_cabang;
 
@@ -121,17 +118,23 @@ class TransaksiController extends Controller
     }
 
     public function store(Request $request){ 
-        $id = Transaksi::where('no_transaksi', $request->no_transaksi)->first()->id_transaksi;
-        $id_user = Transaksi::where('no_transaksi', $request->no_transaksi)->first()->id_user;
-
+        $transaksi = Transaksi::where('no_transaksi', $request->no_transaksi);
+        $transaksiDetil = TransaksiDetail::where('id_transaksi', $transaksi->first()->id_transaksi);
+        
         Session::flash('diterima', $request->diterima);
-        if(TransaksiDetail::where('id_transaksi', $id)->count() == 0 && Transaksi::where('id_transaksi', $id)->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');          
-        }elseif(TransaksiDetail::where('id_transaksi', $id)->count() == 0){
+        if($transaksiDetil->count() == 0 && $transaksi->count('id_user') == 0){
+            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');
+        }elseif($transaksiDetil->count() == 0){
             return redirect('admin/transaksi/create')->with('error', 'Layanan Wajib Ditambah');          
-        }elseif(Transaksi::where('id_transaksi', $id)->count('id_user') == 0){
+        }elseif($transaksi->count('id_user') == 0){
             return redirect('admin/transaksi/create')->with('error', 'Pengguna Wajib Ditambah');          
         }
+
+        $details = $transaksiDetil->select('id_layanan')->get();
+        foreach ($details as $g => $f) {
+            $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
+        }
+        $max = max($layanan);
 
         if($request->diterima < $request->total_tagihan){
             $status = 2;
@@ -150,53 +153,15 @@ class TransaksiController extends Controller
         $poinMasuk = ($request->total_tagihan / 100) + 100;
 
         if($request->poin > 0){
-            $rekap_poin = Poin::where('id_user', $id_user)->where('status', 'aktif')->orderBy('tgl_tenggat', 'asc')->select('id_poin')->get();
-            $temp = $request->poin;
-            foreach($rekap_poin as $key => $value){
-                $jumlah[$key] = Poin::where('id_poin', $value->id_poin)->first()->jumlah;
-                $tanggal[$key] = Poin::where('id_poin', $value->id_poin)->first()->tgl_tenggat;
-                $id_transaksi[$key] = Poin::where('id_poin', $value->id_poin)->first()->id_transaksi;
-                $temp = $temp - $jumlah[$key];
-                Poin::where('id_poin', $value->id_poin)->update([
-                    'status' => 'tidak aktif'
-                ]);
-                if($temp == 0){
-                    break;
-                }
-                elseif($temp < 0){
-                    $temp = $temp * -1;
-                    $tanggalx = $tanggal[$key];
-                    $id_transaksix = $id_transaksi[$key];
-                    $poin = new Poin([
-                        'id_transaksi' =>$id_transaksix,
-                        'id_user' => $id_user,
-                        'jumlah' => $temp,
-                        'tgl_tenggat' => $tanggalx,
-                        'status' => "aktif"
-                    ]);
-                    $poin->save();
-                    $id_poin = Poin::where('id_transaksi', $id_transaksix)->max('id_poin');
-                    Transaksi::where('id_transaksi', $id_transaksix)->update([
-                        'id_poin' => $id_poin,
-                    ]);
-                    break;
-                }
-            }
+            $this->poinUpdate($transaksi->first()->id_user, $request->poin);
         }
-
-        $details = TransaksiDetail::where('id_transaksi', $id)->select('id_layanan')->get();
-        foreach ($details as $g => $f) {
-            $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
-        }
-        $tgl_masuk = Transaksi::where('id_transaksi', $id)->first('tgl_masuk');
-        $max = max($layanan);
 
         $update = [
             'id_status_pembayaran' => $status,
             'id_status_transaksi' => 3,
-            'tgl_selesai' => date('Y-m-d', strtotime($tgl_masuk->tgl_masuk. ' + '.$max->durasi.' days')),
+            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi.' days')),
             'tgl_ambil' => null,
-            'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
+            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
             'total_harga' => $request->total_harga,
             'total_tagihan' => $request->total_tagihan,
             'diterima' => $diterima,
@@ -204,23 +169,218 @@ class TransaksiController extends Controller
             'poin_keluar' => $poinKeluar,
         ];
         
-        Transaksi::where('id_transaksi', $id)->update($update);
+        $transaksi->update($update);
         $WA = new WAController;
-        $WA->transaksi($id);
+        $WA->transaksi($transaksi->first()->id_transaksi);
         return redirect('admin/transaksi')->with('success', 'Tambah Transaksi Sukses');
     }
 
-    public function usePoin($id, $nominalPoin){
-        $rekap_poin = Poin::where('id_user', $id)->orderBy('tgl_tenggat', 'asc');
-        return rekap_poin;
+    function poinUpdate($id_user, $poinValue){
+        //dd("+ ".$poin);
+
+        $poin = Poin::where('id_user', $id_user)->where('status', 'aktif')->orderBy('tgl_tenggat', 'asc')->select('id_poin')->get();
+        $temp = $poinValue;
+        foreach($poin as $key => $value){
+            //1
+            $poinSyn = Poin::where('id_poin', $value->id_poin);
+
+            $jumlah[$key] = $poinSyn->first()->jumlah;
+            $tanggal[$key] = $poinSyn->first()->tgl_tenggat;
+            $id_transaksi[$key] = $poinSyn->first()->id_transaksi;
+            $temp = $temp - $jumlah[$key];
+            $poinSyn->update([//ngubah status || A pasti ke TA
+                'status' => 'tidak aktif'
+            ]);
+            if($temp == 0){ // tidak ada sisa keluar
+                break;
+            }
+            elseif($temp < 0){ //kalo sisa minus bikin baris baru
+                $temp = $temp * -1;
+                $tanggalx = $tanggal[$key];
+                $id_transaksix = $id_transaksi[$key];
+                $poinNew = new Poin([
+                    'id_transaksi' =>$id_transaksix,
+                    'id_user' => $id_user,
+                    'jumlah' => $temp,
+                    'tgl_tenggat' => $tanggalx,
+                    'status' => "aktif"
+                ]);
+                $poinNew->save();
+                $id_poin = Poin::where('id_transaksi', $id_transaksix)->max('id_poin');
+                Transaksi::where('id_transaksi', $id_transaksix)->update([
+                    'id_poin' => $id_poin,
+                ]);
+                break;
+            }
+            //kalo sisa plus ngulang ke 1
+        }
+
+        $poinTA = Poin::where('id_user', $id_user)->where('status', 'tidak aktif')->where('tgl_tenggat', '>', Carbon::parse(now()->format('Y-m-d')))->select('id_transaksi')->groupBy('id_transaksi')->orderBy('tgl_tenggat', 'desc')->get();
+        //dd($poinTA);
+        foreach($poinTA as $key => $value){
+            $value->poinMax = Poin::where('id_transaksi', $value->id_transaksi)->max('jumlah');
+            $value->idPoinTA = Poin::where('id_transaksi', $value->id_transaksi)->where('jumlah', $value->poinMax)->first()->id_poin;
+
+            if (Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'aktif')->get()->isEmpty()){
+                if(Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'tidak aktif')->count() > 1){
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([//ngubah status
+                        'id_poin' => $value->idPoinTA
+                    ]);
+                    Poin::where('id_transaksi', $value->id_transaksi)->whereNot('jumlah', $value->poinMax)->where('status', 'tidak aktif')->delete();
+                }
+            }
+        }
     }
 
+    function poinUpdateLower($id_user, $poinValue){
+        //dd("- ".$poin);
+        $poinTA = Poin::where('id_user', $id_user)->where('status', 'tidak aktif')->where('tgl_tenggat', '>', Carbon::parse(now()->format('Y-m-d')))->select('id_transaksi')->groupBy('id_transaksi')->orderBy('tgl_tenggat', 'desc')->get();
+        //dd($poinTA);
+        // foreach($poinTA as $key => $value){
+            
+        //     $value->poinMax = Poin::where('id_transaksi', $value->id_transaksi)->max('jumlah');
+        //     if (Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'aktif')->get()->isEmpty()){
+        //         Poin::whereNot('jumlah', $value->poinMax)->where('status', 'tidak aktif')->delete();
+        //     }
+        // }
+        //dd($poinTA);
+        $temp = $poinValue;
+        
+        $string = 'mulai '.$temp.'<br />';
+        foreach($poinTA as $key => $value){
+            //1 $poinValue = minus
+            $value->poinMax = Poin::where('id_transaksi', $value->id_transaksi)->max('jumlah');
+            $value->tanggal = Poin::where('id_transaksi', $value->id_transaksi)->first()->tgl_tenggat;
+            $value->idPoinTA = Poin::where('id_transaksi', $value->id_transaksi)->where('jumlah', $value->poinMax)->first()->id_poin;
+
+            if(Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'aktif')->get()->isEmpty()){
+                $value->idPoinA = null;
+            }else{
+                $value->idPoinA = Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'aktif')->first()->id_poin;
+            }
+
+            if($value->idPoinA != null){
+                $value->PoinA = Poin::where('id_transaksi', $value->id_transaksi)->where('status', 'aktif')->first()->jumlah;
+                $value->selisih = $value->poinMax - $value->PoinA;
+            }else{
+                $value->PoinA = null;
+                $value->selisih = null;
+            }
+
+            if($value->selisih != null){ //kalo ada selisih
+                $temp = $temp + $value->selisih;
+                if($temp == 0){// tidak sisa MUMETT
+                    //BIKIN status TA jadi A, A jadi TA
+                    Poin::where('id_poin', $value->idPoinTA)->update([//ngubah status
+                        'status' => 'aktif'
+                    ]);
+                    Poin::where('id_poin', $value->idPoinA)->update([//ngubah status
+                        'status' => 'tidak aktif'
+                    ]);
+                    //ganti id poin di tabel transaksi
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                        'id_poin' => $value->idPoinTA,
+                    ]);
+                    //hapus yang jadi tidak aktif
+                    Poin::where('id_transaksi', $value->id_transaksi)->whereNot('id_poin', $value->idPoinTA)->delete();
+                    $string = $string.' sel1 ';
+                    break;
+                }elseif($temp > 0){// sisa plus
+                    //Bikin status A jadi TA, bikin baris baru A + $temp
+                    Poin::where('id_poin', $value->idPoinA)->update([//ngubah status
+                        'status' => 'tidak aktif'
+                    ]);
+                    $poinNew = new Poin([
+                        'id_transaksi' =>$value->id_transaksi,
+                        'id_user' => $id_user,
+                        'jumlah' => $value->PoinA + $temp,
+                        'tgl_tenggat' => $value->tanggal,
+                        'status' => "aktif"
+                    ]);
+                    $poinNew->save();
+                    //ganti id poin di tabel transaksi
+                    $id_poin = Poin::where('id_transaksi', $value->id_transaksi)->max('id_poin');
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                        'id_poin' => $id_poin,
+                    ]);
+                    $string = $string.' sel2 ';
+                    break;
+                }elseif($temp < 0){// sisa masih minus
+                    //BIKIN status TA jadi A, A jadi TA
+                    Poin::where('id_poin', $value->idPoinTA)->update([//ngubah status
+                        'status' => 'aktif'
+                    ]);
+                    Poin::where('id_poin', $value->idPoinA)->update([//ngubah status
+                        'status' => 'tidak aktif'
+                    ]);
+                    //ganti id poin di tabel transaksi
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                        'id_poin' => $value->idPoinTA,
+                    ]);
+                    //hapus yang jadi tidak aktif
+                    Poin::findorfail($value->idPoinA)->delete();
+                    $string = $string.' selMINUS '.$temp.' id'.$value->id_transaksi.'<br />';
+                }
+                //ngulang ke 1
+
+            }else{ //kalo engga ada selisih
+                $temp = $temp + $value->poinMax;
+                if($temp == 0){// tidak sisa
+                    //BIKIN status TA jadi A
+                    Poin::where('id_poin', $value->idPoinTA)->update([//ngubah status
+                        'status' => 'aktif'
+                    ]);
+                    //ganti id poin di tabel transaksi
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                    'id_poin' => $value->idPoinTA,
+                    ]);
+                    $string = $string.' 1 ';
+                    break;
+                }elseif($temp > 0){// sisa positif
+                    //Bikin bikin baris baru A jumlah $temp
+                    $poinNew = new Poin([
+                        'id_transaksi' =>$value->id_transaksi,
+                        'id_user' => $id_user,
+                        'jumlah' => $value->poinMax - $temp,
+                        'tgl_tenggat' => $value->tanggal,
+                        'status' => "aktif"
+                    ]);
+                    $poinNew->save();
+                    //ganti id poin di tabel transaksi
+                    $id_poin = Poin::where('id_transaksi', $value->id_transaksi)->max('id_poin');
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                    'id_poin' => $id_poin,
+                    ]);
+                    $string = $string.' 2 ';
+                    break;
+                }elseif($temp < 0){// sisa masih minus
+                    //BIKIN status TA jadi A
+                    Poin::where('id_poin', $value->idPoinTA)->update([//ngubah status
+                        'status' => 'aktif'
+                    ]);
+                    //ganti id poin di tabel transaksi
+                    Transaksi::where('id_transaksi', $value->id_transaksi)->update([
+                    'id_poin' => $value->idPoinTA,
+                    ]);
+                    $string = $string.' MINUS '.$temp.' id'.$value->id_transaksi.'<br />';
+                }
+            }
+            //kalo minus ngulang ke 1
+        }
+    
+        return [$string,$poinTA];
+        //dd($poinTA, $temp);
+    }
+    
     public function update(Request $request, $id){ 
-        if(TransaksiDetail::where('id_transaksi', $id)->count() == 0 && Transaksi::where('id_transaksi', $id)->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');          
-        }elseif(TransaksiDetail::where('id_transaksi', $id)->count() == 0){
+        $transaksi = Transaksi::where('id_transaksi', $id);
+        $transaksiDetil = TransaksiDetail::where('id_transaksi', $id);
+
+        if($transaksiDetil->count() == 0 && $transaksi->count('id_user') == 0){
+            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');
+        }elseif($transaksiDetil->count() == 0){
             return redirect('admin/transaksi/create')->with('error', 'Layanan Wajib Ditambah');          
-        }elseif(Transaksi::where('id_transaksi', $id)->count('id_user') == 0){
+        }elseif($transaksi->count('id_user') == 0){
             return redirect('admin/transaksi/create')->with('error', 'Pengguna Wajib Ditambah');          
         }
 
@@ -240,25 +400,33 @@ class TransaksiController extends Controller
         }
         $poinMasuk = ($request->total_tagihan / 100) + 100;
 
-        $details = TransaksiDetail::where('id_transaksi', $id)->select('id_layanan')->get();
+        $poinOld = $transaksi->first()->poin_keluar;
+        $poinNew = $request->poin - $poinOld;
+
+        if($poinNew > 0){
+            $this->poinUpdate($transaksi->first()->id_user, $poinNew);
+        }elseif($poinNew < 0){
+            $this->poinUpdateLower($transaksi->first()->id_user, $poinNew);
+        }
+
+        $details = $transaksiDetil->select('id_layanan')->get();
         foreach ($details as $g => $f) {
             $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
         }
-        $tgl_masuk = Transaksi::where('id_transaksi', $id)->first('tgl_masuk');
         $max = max($layanan);
 
         $update = [
             'id_status_pembayaran' => $status,
-            'tgl_selesai' => date('Y-m-d', strtotime($tgl_masuk->tgl_masuk. ' + '.$max->durasi.' days')),
+            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi.' days')),
             'tgl_ambil' => null,
-            'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
+            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
             'total_harga' => $request->total_harga,
             'total_tagihan' => $request->total_tagihan,
             'diterima' => $diterima,
             'poin_masuk' => $poinMasuk,
             'poin_keluar' => $poinKeluar,
         ];
-        Transaksi::where('id_transaksi', $id)->update($update);
+        $transaksi->update($update);
         return redirect('admin/transaksi')->with('success', 'Edit Transaksi Sukses');
     }
 
@@ -324,24 +492,25 @@ class TransaksiController extends Controller
             'id_status_pembayaran' => 1,
             'diterima' => $totalTagihan,
         ]);
-        return redirect('admin/transaksi')->with('success', 'Edit Status Sukses');
+        return redirect('admin/transaksi/'.$id.'/edit')->with('success', 'Edit Status Sukses');
     }
 
     public function ambil($id){
-        $id_user = Transaksi::where('id_transaksi', $id)->first()->id_user;
-        $tgl_masuk = Transaksi::where('id_transaksi', $id)->first()->tgl_masuk;
-        $poinKeluar = Transaksi::where('id_transaksi', $id)->first()->poin_keluar;
-        $poinMasuk = Transaksi::where('id_transaksi', $id)->first()->poin_masuk;
+        $transaksi = Transaksi::where('id_transaksi', $id);
+        $id_user = $transaksi->first()->id_user;
+        $tgl_masuk = $transaksi->first()->tgl_masuk;
+        //$poinKeluar = $transaksi->first()->poin_keluar;
+        $poinMasuk = $transaksi->first()->poin_masuk;
         $poin = new Poin([
             'id_transaksi' =>$id,
             'id_user' => $id_user,
-            'jumlah' => $poinKeluar + $poinMasuk,
+            'jumlah' => $poinMasuk,
             'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk. ' + '. 90 .' days')),
             'status' => "aktif"
         ]);
         $poin->save();
         $id_poin = Poin::where('id_transaksi', $id)->first()->id_poin;
-        Transaksi::where('id_transaksi', $id)->update([
+        $transaksi->update([
             'id_status_transaksi' => 7,
             'tgl_ambil' => now(),
             'id_poin' => $id_poin

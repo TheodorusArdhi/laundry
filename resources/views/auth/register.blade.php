@@ -4,7 +4,7 @@
         @include('template.head')
         <title>Registrasi - Sinar Laundry</title>
     </head>
-    <body class="bg-primary">
+    <body class="bg-secondary">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
@@ -51,12 +51,12 @@
                                             </div>
 
                                             <div class="mt-4 mb-0">
-                                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-block fw-semibold" style="font-size: 1.12rem;" >Daftar</button></div>
+                                                <div class="d-grid"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" role="button" data-toggle="tooltip" data-placement="top" title="Daftar Akun">Daftar</button></div>
                                             </div>
                                         </form>
                                     </div>
                                     <div class="card-footer text-start py-3">
-                                        <a class="btn btn-info fw-semibold" style="font-size: 1.12rem;" href="{{ url('login/index') }}">Login</a>
+                                        <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('login/index') }}">Login</a>
                                     </div>
                                 </div>
                             </div>

@@ -57,6 +57,7 @@ Route::prefix('/owner')->middleware(['auth', 'checkLevel:owner'])->group(functio
     Route::post('/pengumuman/{id}/update',[PengumumanController::class,'update'])->name('update');
     Route::delete('/pengumuman/{id}/delete',[PengumumanController::class,'delete'])->name('delete');
 
+    Route::get('/user',[UserController::class,'index']);
     Route::get('/user/create',[UserController::class,'create']);
 
     Route::post('/penyimpanan/cabang',[PenyimpananController::class,'cabang']);
@@ -69,15 +70,8 @@ Route::prefix('/owner')->middleware(['auth', 'checkLevel:owner'])->group(functio
     Route::get('/layanan/export/{awal}/{akhir}',[LaporanController::class, 'layananExport']);
 }); 
 
-Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(function () {
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(function () {
 
-    Route::get('/user',[UserController::class,'index']);
-    Route::post('/user/store',[UserController::class,'store'])->name('store');
-    Route::get('/user/{id}/edit',[UserController::class,'edit']);
-    Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
-    Route::delete('/user/{id}/delete',[UserController::class,'delete'])->name('delete');
-
-    Route::get('/transaksi',[TransaksiController::class,'indexAdmin']);
     Route::get('/transaksi/data',[TransaksiController::class,'data']);
     Route::get('/transaksi/create',[TransaksiController::class,'create']);
     Route::post('/transaksi/store',[TransaksiController::class,'store'])->name('store');
@@ -97,6 +91,19 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(f
     Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
     Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
     Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');
+}); 
+
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(function () {
+
+    Route::get('/user',[UserController::class,'indexAdmin']);
+    Route::post('/user/store',[UserController::class,'store'])->name('store');
+    Route::get('/user/{id}/edit',[UserController::class,'edit']);
+    Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
+    Route::delete('/user/{id}/delete',[UserController::class,'delete'])->name('delete');
+
+    Route::get('/transaksi',[TransaksiController::class,'indexAdmin']);
+    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editAdmin'])->name('editAdmin');
+
 
     Route::get('/poin',[PoinController::class,'indexAdmin']);
     Route::post('/poin/user',[PoinController::class,'poin']);
