@@ -18,7 +18,7 @@
                                         <form method="POST" action="{{ url('login') }}">
                                             {{ csrf_field() }}
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" value="{{ old('email') }}" name="email" type="email" placeholder="name@example.com" />
+                                                <input class="form-control" value="{{ old('email') }}" name="email" type="email" placeholder="nama@email.com" />
                                                 <label for="email">Email</label>
                                             </div>
                                             <div class="form-floating mb-3">
@@ -34,7 +34,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-start py-3">
-                                        <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}" role="button" data-toggle="tooltip" data-placement="top" title="Daftar Akun">Register</a>
+                                        <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}" role="button" data-toggle="tooltip" data-placement="top" title="Daftar Akun">Daftar</a>
                                     </div>
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                 </main>
                 @include('sweetalert::alert')
             </div>
-            <div id="layoutAuthentication_footer">
+            {{--  <div id="layoutAuthentication_footer">
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                 </footer>
-            </div>
+            </div>  --}}
         </div>
         @include('template.foot')
     </body>

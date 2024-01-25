@@ -17,27 +17,27 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
-                            <form method="POST" action=" {{ url('owner/pengumuman/'. $pengumuman->id_pengumuman.'/update') }}">
+                            <form method="POST" action=" {{ url('pemilik/pengumuman/'. $pengumuman->id_pengumuman.'/update') }}">
                                 {{ csrf_field() }} 
 
                                 <label for="judul" class="fw-semibold form-label mx-3 mt-2 mb-0">Judul</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="judul" class="form-control form-control-lg" name="judul" placeholder="Masukkan Judul Pengumuman" value="{{ $pengumuman->judul }}" />
+                                        <input type="text" id="judul" class="form-control form-control-lg" name="judul" placeholder="Judul Pengumuman" value="{{ $pengumuman->judul }}" />
                                     </div>
                                 </div>
 
                                 <label for="deskripsi" class="fw-semibold form-label mx-3 mt-2 mb-0">Deskripsi</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Masukkan Dskripsi Pengumuman">{{ $pengumuman->deskripsi }}</textarea>
+                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Dskripsi Pengumuman">{{ $pengumuman->deskripsi }}</textarea>
                                     </div>
                                 </div>
 
                                 <label for="diskon" class="fw-semibold form-label mx-3 mt-2 mb-0">Diskon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="number" id="diskon" class="form-control form-control-lg" name="diskon" placeholder="Masukkan Jumlah Diskon" aria-describedby="diskon" value="{{ $pengumuman->diskon }}"/>
+                                        <input type="number" id="diskon" class="form-control form-control-lg" name="diskon" placeholder="Jumlah Diskon" aria-describedby="diskon" value="{{ $pengumuman->diskon }}"/>
                                     </div>
                                     <div class="col-auto">
                                         <label for="diskon" class="col-form-label">%</label>
@@ -47,7 +47,7 @@
                                 <label for="status" class="fw-semibold form-label mx-3 mt-2 mb-0">Status</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <select class="form-control form-control-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
+                                        <select class="form-select form-select-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
                                             <option value="{{ $pengumuman->status }}">{{ $pengumuman->status }}</option>
                                             <option value="aktif">Aktif</option>
                                             <option value="tidak aktif">Tidak Aktif</option>
@@ -57,7 +57,7 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/pengumuman') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/pengumuman') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Pengumuman">Simpan</button></div>
                                 </div>

@@ -17,7 +17,7 @@ class PenyimpananController extends Controller
 
         $branch = 'Semua';
         $cabang = Cabang::all();
-        if(Auth::user()->level == "owner"){
+        if(Auth::user()->level == "pemilik"){
             $penyimpanan = Penyimpanan::orderBy('created_at', 'desc')->get();
         }else{
             $penyimpanan = Penyimpanan::orderBy('created_at', 'desc')->where('id_cabang', Auth::user()->id_cabang)->get();
@@ -44,7 +44,7 @@ class PenyimpananController extends Controller
 
     public function store(Request $request){
 
-        if(Auth::user()->level == "owner"){
+        if(Auth::user()->level == "pemilik"){
             Session::flash('cabang', $request->cabang);
             $request->validate([
                 'cabang'=>'required',
@@ -69,7 +69,7 @@ class PenyimpananController extends Controller
             'harga.required' => 'harga wajib diisi',
         ]);
 
-        if(Auth::user()->level == "owner"){
+        if(Auth::user()->level == "pemilik"){
             $id_cabang = $request->cabang;
         }else{
             $id_cabang = Auth::user()->id_cabang;
@@ -94,7 +94,7 @@ class PenyimpananController extends Controller
     public function update(Request $request, $id){  
         $penyimpanan = Penyimpanan::findorfail($id);
 
-        if(Auth::user()->level == "owner"){
+        if(Auth::user()->level == "pemilik"){
             $request->validate([
                 'cabang'=>'required',
             ], [
@@ -114,7 +114,7 @@ class PenyimpananController extends Controller
             'harga.required' => 'harga wajib diisi',
         ]);
 
-        if(Auth::user()->level == "owner"){
+        if(Auth::user()->level == "pemilik"){
             $id_cabang = $request->cabang;
         }else{
             $id_cabang = Auth::user()->id_cabang;

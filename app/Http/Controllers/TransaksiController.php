@@ -34,7 +34,7 @@ class TransaksiController extends Controller
             Transaksi::where('id_transaksi', $delete)->delete();
         }
 
-        if(Auth::user()->level == 'owner'){
+        if(Auth::user()->level == 'pemilik'){
             $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_status_transaksi', 'asc')->orderBy('id_transaksi', 'desc')->get();
         }else{
             $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderBy('id_status_transaksi', 'asc')->orderBy('id_transaksi', 'desc')->where('id_cabang', Auth::user()->id_cabang)->get();
@@ -49,7 +49,6 @@ class TransaksiController extends Controller
             $noTransaksi = explode('-', Transaksi::latest()->first()->no_transaksi);
             $noTransaksiBaru = "SL".date('ymd').'-'. sprintf("%03s",$noTransaksi[1]+1);
         }
-        //dd(Transaksi::where('tgl_masuk', date('Y-m-d'))->count());
         $id_admin = Auth::user()->id_user;
         $id_cabang = User::where('id_user', $id_admin)->first()->id_cabang;
 
@@ -57,9 +56,6 @@ class TransaksiController extends Controller
             'id_admin' => $id_admin,
             'no_transaksi' => $noTransaksiBaru,
             'tgl_masuk' => date('Y-m-d'),
-            'total_harga' => 0,
-            'total_tagihan' => 0,
-            'diterima' => 0,
             'id_cabang' => $id_cabang,
 
         ]);
@@ -72,9 +68,9 @@ class TransaksiController extends Controller
         $del = 'Yakin Hapus Layanan?';
         confirmDelete($del);
         $id_transaksi = session('id_transaksi');
-        $pengguna = User::where("level", "pengguna")->get();
-        $pengumuman = Pengumuman::where("status", "aktif")->get();
-        $layanan = Layanan::where("status", "aktif")->get();
+        $pengguna = User::whereIn("level", ["pelanggan", "anggota"])->orderBy('nama')->get();
+        $pengumuman = Pengumuman::where("status", "aktif")->orderBy('diskon')->get();
+        $layanan = Layanan::where("status", "aktif")->orderBy('harga')->get();
         $detail = TransaksiDetail::with('layanan')->where('id_transaksi', $id_transaksi)->get();
 
         $totalHarga = TransaksiDetail::where('id_transaksi', $id_transaksi)->sum('subtotal');
@@ -90,13 +86,76 @@ class TransaksiController extends Controller
         return view('transaksi.create', compact('pengguna', 'pengumuman', 'layanan', 'transaksi', 'detail'));
     }
 
+    public function store(Request $request){ 
+        $transaksi = Transaksi::where('no_transaksi', $request->no_transaksi);
+        $transaksiDetil = TransaksiDetail::where('id_transaksi', $transaksi->first()->id_transaksi);
+        Session::flash('diterima', $request->diterima);
+
+        $cek = $this->CekData($request->no_transaksi);
+        if($cek != null){
+            return $cek;
+        }
+
+        $details = $transaksiDetil->pluck('id_layanan');
+        $max = Layanan::whereIn('id_layanan', $details)->pluck('durasi')->max();
+
+        if($request->diterima < $request->total_tagihan){
+            $status = 2;
+            $diterima = 0;
+        }else{
+            $status = 1;
+            $diterima = $request->diterima;
+        }
+
+        $id_user = $transaksi->first()->id_user;
+        $level = User::where('id_user', $id_user)->first()->level;
+        if($level == "anggota"){
+            if($request->total_tagihan == 0){
+                $status = 1;
+                $poinKeluar = $request->total_tagihan_ori;
+            }else{
+                $poinKeluar = $request->poin;
+            }
+            $poinMasuk = ($request->total_tagihan / 100) + 100;
+        }else{
+            $poinKeluar = 0;
+            $poinMasuk = 0;
+        }
+        
+        if($request->poin > 0){
+            $this->poinUpdate($transaksi->first()->id_user, $request->poin);
+        }
+
+        $update = [
+            'id_status_pembayaran' => $status,
+            'id_status_transaksi' => 3,
+            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max.' days')),
+            'tgl_ambil' => null,
+            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max + 30 .' days')),
+            'total_harga' => $request->total_harga,
+            'total_tagihan' => $request->total_tagihan,
+            'diterima' => $diterima,
+            'poin_masuk' => $poinMasuk,
+            'poin_keluar' => $poinKeluar,
+        ];
+        
+        $transaksi->update($update);
+        $WA = new WAController;
+        if($level == "anggota"){
+            $WA->transaksiAnggota($transaksi->first()->id_transaksi);
+        }else{
+            $WA->transaksi($transaksi->first()->id_transaksi);
+        }
+        return redirect('admin/transaksi')->with('success', 'Tambah Transaksi Sukses');
+    }
+
     public function editAdmin($id){  
         $del = 'Yakin Hapus Layanan?';
         confirmDelete($del);
-        $transaksiDetail = TransaksiDetail::with('layanan')->where('id_transaksi', $id)->get();
-        $pengguna = User::where("level", "pengguna")->get();
-        $pengumuman = Pengumuman::where("status", "aktif")->get();
-        $layanan = Layanan::where("status", "aktif")->get();
+        $detail = TransaksiDetail::with('layanan')->where('id_transaksi', $id)->get();
+        $pengguna = User::whereIn("level", ["pelanggan", "anggota"])->orderBy('nama')->get();
+        $pengumuman = Pengumuman::where("status", "aktif")->orderBy('diskon')->get();
+        $layanan = Layanan::where("status", "aktif")->orderBy('harga')->get();
 
         $totalHarga = TransaksiDetail::where('id_transaksi', $id)->sum('subtotal');
         $diskon = Transaksi::where('id_transaksi', $id)->first()->diskon;
@@ -108,71 +167,13 @@ class TransaksiController extends Controller
         ]);
 
         $transaksi = Transaksi::with('user')->find($id);
-        return view('transaksi.edit', compact('transaksi', 'transaksiDetail', 'pengguna', 'pengumuman', 'layanan'));
+        return view('transaksi.edit', compact('transaksi', 'detail', 'pengguna', 'pengumuman', 'layanan'));
     }
 
     public function editUser($id){  
         $transaksi = Transaksi::with('pengumuman', 'user', 'admin')->find($id);
-        $transaksiDetail = TransaksiDetail::with( 'layanan')->where('id_transaksi', $id)->get();
-        return view('transaksi.edit', compact('transaksi', 'transaksiDetail'));
-    }
-
-    public function store(Request $request){ 
-        $transaksi = Transaksi::where('no_transaksi', $request->no_transaksi);
-        $transaksiDetil = TransaksiDetail::where('id_transaksi', $transaksi->first()->id_transaksi);
-        
-        Session::flash('diterima', $request->diterima);
-        if($transaksiDetil->count() == 0 && $transaksi->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');
-        }elseif($transaksiDetil->count() == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan Wajib Ditambah');          
-        }elseif($transaksi->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Pengguna Wajib Ditambah');          
-        }
-
-        $details = $transaksiDetil->select('id_layanan')->get();
-        foreach ($details as $g => $f) {
-            $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
-        }
-        $max = max($layanan);
-
-        if($request->diterima < $request->total_tagihan){
-            $status = 2;
-            $diterima = 0;
-        }else{
-            $status = 1;
-            $diterima = $request->diterima;
-        }
-
-        if($request->total_tagihan == 0){
-            $status = 1;
-            $poinKeluar = $request->total_tagihan_ori;
-        }else{
-            $poinKeluar = $request->poin;
-        }
-        $poinMasuk = ($request->total_tagihan / 100) + 100;
-
-        if($request->poin > 0){
-            $this->poinUpdate($transaksi->first()->id_user, $request->poin);
-        }
-
-        $update = [
-            'id_status_pembayaran' => $status,
-            'id_status_transaksi' => 3,
-            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi.' days')),
-            'tgl_ambil' => null,
-            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
-            'total_harga' => $request->total_harga,
-            'total_tagihan' => $request->total_tagihan,
-            'diterima' => $diterima,
-            'poin_masuk' => $poinMasuk,
-            'poin_keluar' => $poinKeluar,
-        ];
-        
-        $transaksi->update($update);
-        $WA = new WAController;
-        $WA->transaksi($transaksi->first()->id_transaksi);
-        return redirect('admin/transaksi')->with('success', 'Tambah Transaksi Sukses');
+        $detail = TransaksiDetail::with( 'layanan')->where('id_transaksi', $id)->get();
+        return view('transaksi.edit', compact('transaksi', 'detail'));
     }
 
     function poinUpdate($id_user, $poinValue){
@@ -194,7 +195,7 @@ class TransaksiController extends Controller
             if($temp == 0){ // tidak ada sisa keluar
                 break;
             }
-            elseif($temp < 0){ //kalo sisa minus bikin baris baru
+            elseif($temp < 0){ // kalo sisa minus bikin baris baru
                 $temp = $temp * -1;
                 $tanggalx = $tanggal[$key];
                 $id_transaksix = $id_transaksi[$key];
@@ -376,12 +377,12 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::where('id_transaksi', $id);
         $transaksiDetil = TransaksiDetail::where('id_transaksi', $id);
 
-        if($transaksiDetil->count() == 0 && $transaksi->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');
-        }elseif($transaksiDetil->count() == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Layanan Wajib Ditambah');          
-        }elseif($transaksi->count('id_user') == 0){
-            return redirect('admin/transaksi/create')->with('error', 'Pengguna Wajib Ditambah');          
+        $details = $transaksiDetil->pluck('id_layanan');
+        $max = Layanan::whereIn('id_layanan', $details)->pluck('durasi')->max();
+
+        $cek = $this->CekData($transaksi->first()->no_transaksi);
+        if($cek != null){
+            return $cek;
         }
 
         if($request->diterima < $request->total_tagihan){
@@ -392,34 +393,35 @@ class TransaksiController extends Controller
             $diterima = $request->diterima;
         }
 
-        if($request->poin > $request->total_tagihan){
-            $status = 1;
-            $poinKeluar = $request->total_tagihan_ori;
+        $id_user = $transaksi->first()->id_user;
+        $level = User::where('id_user', $id_user)->first()->level;
+        if($level == "anggota"){
+            if($request->total_tagihan == 0){
+                $status = 1;
+                $poinKeluar = $request->total_tagihan_ori;
+            }else{
+                $poinKeluar = $request->poin;
+            }
+            $poinMasuk = ($request->total_tagihan / 100) + 100;
         }else{
-            $poinKeluar = $request->poin;
+            $poinKeluar = 0;
+            $poinMasuk = 0;
         }
-        $poinMasuk = ($request->total_tagihan / 100) + 100;
 
         $poinOld = $transaksi->first()->poin_keluar;
         $poinNew = $request->poin - $poinOld;
-
         if($poinNew > 0){
             $this->poinUpdate($transaksi->first()->id_user, $poinNew);
         }elseif($poinNew < 0){
             $this->poinUpdateLower($transaksi->first()->id_user, $poinNew);
         }
 
-        $details = $transaksiDetil->select('id_layanan')->get();
-        foreach ($details as $g => $f) {
-            $layanan[$g] = Layanan::where('id_layanan', $f->id_layanan)->first('durasi');
-        }
-        $max = max($layanan);
-
+        //dd($request);
         $update = [
             'id_status_pembayaran' => $status,
-            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi.' days')),
+            'tgl_selesai' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max.' days')),
             'tgl_ambil' => null,
-            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max->durasi + 30 .' days')),
+            'tgl_tenggat' => date('Y-m-d', strtotime($transaksi->first()->tgl_masuk. ' + '.$max + 30 .' days')),
             'total_harga' => $request->total_harga,
             'total_tagihan' => $request->total_tagihan,
             'diterima' => $diterima,
@@ -428,6 +430,28 @@ class TransaksiController extends Controller
         ];
         $transaksi->update($update);
         return redirect('admin/transaksi')->with('success', 'Edit Transaksi Sukses');
+    }
+
+    public function tanggal(Request $request, $id){
+        $selesaiLama = Transaksi::where('id_transaksi', $id)->first()->tgl_selesai;
+        $selesaiBaru = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+        //dd($selesaiLama,Carbon::parse($selesaiBaru));
+        if (Carbon::parse(now()->format('Y-m-d'))->diffInDays($selesaiBaru, false) < 1){
+            return redirect('admin/transaksi/'.$id.'/edit')->with('error', 'Tanggal harus melebihi hari ini');
+        }elseif($selesaiLama->diffInDays($selesaiBaru, false) == 0){
+            return redirect('admin/transaksi/'.$id.'/edit')->with('error', 'Tanggal sama dengan tanggal selesai lama');
+        }else{
+            $update = [
+                'id_status_transaksi' => 3,
+                'tgl_selesai' => $selesaiBaru,
+                'tgl_tenggat' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->addDays(30)->format('Y-m-d'),
+            ];
+            //dd($update);
+            Transaksi::where('id_transaksi', $id)->update($update);
+            $WA = new WAController;
+            $WA->tanggal($id, $selesaiLama);
+        }
+        return redirect('admin/transaksi/'.$id.'/edit')->with('success', 'Edit Tanggal Selesai Sukses');
     }
 
     public function diskon(Request $request){ 
@@ -482,7 +506,7 @@ class TransaksiController extends Controller
 
     public function batal($id){  
         Transaksi::where('id_transaksi', $id)->update(['id_status_transaksi' => 8]);
-        TransaksiDetail::where('id_transaksi', $id)->update(['jumlah' => 0, 'subtotal' => 0]);
+        //TransaksiDetail::where('id_transaksi', $id)->update(['jumlah' => 0, 'subtotal' => 0]);
         return redirect('admin/transaksi')->with('success', 'Edit Status Sukses');
     }
 
@@ -498,23 +522,33 @@ class TransaksiController extends Controller
     public function ambil($id){
         $transaksi = Transaksi::where('id_transaksi', $id);
         $id_user = $transaksi->first()->id_user;
-        $tgl_masuk = $transaksi->first()->tgl_masuk;
-        //$poinKeluar = $transaksi->first()->poin_keluar;
-        $poinMasuk = $transaksi->first()->poin_masuk;
-        $poin = new Poin([
-            'id_transaksi' =>$id,
-            'id_user' => $id_user,
-            'jumlah' => $poinMasuk,
-            'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk. ' + '. 90 .' days')),
-            'status' => "aktif"
-        ]);
-        $poin->save();
-        $id_poin = Poin::where('id_transaksi', $id)->first()->id_poin;
-        $transaksi->update([
-            'id_status_transaksi' => 7,
-            'tgl_ambil' => now(),
-            'id_poin' => $id_poin
-        ]);
+        $level = User::where('id_user', $id_user)->first()->level;
+        
+        if($level == "anggota"){
+            $tgl_masuk = $transaksi->first()->tgl_masuk;
+            $poinMasuk = $transaksi->first()->poin_masuk;
+            $poin = new Poin([
+                'id_transaksi' =>$id,
+                'id_user' => $id_user,
+                'jumlah' => $poinMasuk,
+                'tgl_tenggat' => date('Y-m-d', strtotime($tgl_masuk. ' + '. 90 .' days')),
+                'status' => "aktif"
+            ]);
+            $poin->save();
+            $id_poin = Poin::where('id_transaksi', $id)->first()->id_poin;
+            $transaksi->update([
+                'id_poin' => $id_poin,
+                'id_status_transaksi' => 7,
+                'tgl_ambil' => now(),
+            ]);
+        }else{
+            $transaksi->update([
+                'id_status_transaksi' => 7,
+                'tgl_ambil' => now(),
+            ]);
+            $WA = new WAController;
+            $WA->ambilUser($transaksi->first()->id_transaksi);
+        }
         return redirect('admin/transaksi')->with('success', 'Edit Status Sukses');
     }
 
@@ -537,5 +571,18 @@ class TransaksiController extends Controller
         $transaksiDetail = TransaksiDetail::where('id_transaksi', $id)->get();
         $cabang = Cabang::find($transaksi->id_cabang);
         return view('transaksi.invoice', compact('transaksi', 'transaksiDetail', 'cabang'));
+    }
+
+    public function cekData($no){
+        $transaksi = Transaksi::where('no_transaksi', $no);
+        //dd($no);
+        $transaksiDetil = TransaksiDetail::where('id_transaksi', $transaksi->first()->id_transaksi);
+        if($transaksiDetil->count() == 0 && $transaksi->count('id_user') == 0){
+            return redirect('admin/transaksi/create')->with('error', 'Layanan dan Pengguna Wajib Ditambah');
+        }elseif($transaksiDetil->count() == 0){
+            return redirect('admin/transaksi/create')->with('error', 'Layanan Wajib Ditambah');          
+        }elseif($transaksi->count('id_user') == 0){
+            return redirect('admin/transaksi/create')->with('error', 'Pengguna Wajib Ditambah');          
+        }
     }
 }

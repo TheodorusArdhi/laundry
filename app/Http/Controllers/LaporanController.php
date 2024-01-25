@@ -14,22 +14,24 @@ use App\Exports\LayananExport;
 class LaporanController extends Controller
 {
     public function penjualan(){ 
-        $penjualan = Transaksi::where('id_status_transaksi', '<', 8)->get();
-        $awal = Transaksi::min('tgl_masuk');
+        $transaksi = Transaksi::where('id_status_transaksi', '<', 8);
+        $penjualan = $transaksi->get();
+        $awal = $transaksi->min('tgl_masuk');
         $awal = date('d/m/Y', strtotime($awal));
-        $akhir = Transaksi::max('tgl_masuk');
+        $akhir = $transaksi->max('tgl_masuk');
         $akhir = date('d/m/Y', strtotime($akhir));
         return view('laporan.penjualan', compact('penjualan', 'awal', 'akhir'));
     }
     
     public function layanan(){ 
+        $batal = Transaksi::where('id_status_transaksi', 8)->select('id_transaksi')->pluck('id_transaksi');
         $layananCount = [ 'layanan' => Layanan::select('id_layanan')->get()];
         foreach ($layananCount['layanan'] as $key => $value) {
             $value->nama = Layanan::where('id_layanan', $value->id_layanan)->first()->nama;
             $value->harga = Layanan::where('id_layanan', $value->id_layanan)->first()->harga;
             $value->satuan = Layanan::where('id_layanan', $value->id_layanan)->first()->satuan;
-            $value->jumlah = TransaksiDetail::where('id_layanan', $value->id_layanan)->sum('jumlah');
-            $value->pemasukan = TransaksiDetail::where('id_layanan', $value->id_layanan)->sum('subtotal');
+            $value->jumlah = TransaksiDetail::where('id_layanan', $value->id_layanan)->whereNotIn('id_transaksi', $batal)->sum('jumlah');
+            $value->pemasukan = TransaksiDetail::where('id_layanan', $value->id_layanan)->whereNotIn('id_transaksi', $batal)->sum('subtotal');
         }
         $awal = Transaksi::min('tgl_masuk');
         $awal = date('d/m/Y', strtotime($awal));
@@ -48,6 +50,7 @@ class LaporanController extends Controller
     }
 
     public function tanggalLayanan(Request $request){ 
+        $batal = Transaksi::where('id_status_transaksi', 8)->select('id_transaksi')->pluck('id_transaksi');
         $awal = $request->awal;
         $akhir = $request->akhir;
         $layananCount = [ 'layanan' => Layanan::select('id_layanan')->get()];
@@ -57,10 +60,10 @@ class LaporanController extends Controller
             $value->satuan = Layanan::where('id_layanan', $value->id_layanan)->first()->satuan;
             $value->jumlah = TransaksiDetail::where('id_layanan', $value->id_layanan)->whereBetween('created_at', [
                 Carbon::createFromFormat('d/m/Y', $awal)->startOfDay(), 
-                Carbon::createFromFormat('d/m/Y', $akhir)->endOfDay()])->sum('jumlah');
+                Carbon::createFromFormat('d/m/Y', $akhir)->endOfDay()])->whereNotIn('id_transaksi', $batal)->sum('jumlah');
             $value->pemasukan = TransaksiDetail::where('id_layanan', $value->id_layanan)->whereBetween('created_at', [
                 Carbon::createFromFormat('d/m/Y', $awal)->startOfDay(), 
-                Carbon::createFromFormat('d/m/Y', $akhir)->endOfDay()])->sum('subtotal');
+                Carbon::createFromFormat('d/m/Y', $akhir)->endOfDay()])->whereNotIn('id_transaksi', $batal)->sum('subtotal');
         }
         return view('laporan.layanan', compact('layananCount', 'awal', 'akhir'));
     }

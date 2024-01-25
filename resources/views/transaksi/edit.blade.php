@@ -22,7 +22,7 @@
                         <div class="mb-2 mt-0 d-grid gap-2 d-md-flex justify-content-md-end">
                             @if (Auth::user()->level == "admin")
                                 @if ($transaksi->id_status_pembayaran == "2")
-                                <a class="btn btn-success fw-semibold" href={{ url('admin/transaksi/'. $transaksi->id_transaksi.'/lunas') }} role="button" data-toggle="tooltip" data-placement="top" title="Lunaskan Transaksi">Lunas <i class="fa-solid fa-dollar-sign"></i></a>
+                                {{--  <a class="btn btn-success fw-semibold" href={{ url('admin/transaksi/'. $transaksi->id_transaksi.'/lunas') }} role="button" data-toggle="tooltip" data-placement="top" title="Lunaskan Transaksi">Lunas <i class="fa-solid fa-dollar-sign"></i></a>  --}}
                                 @elseif ($transaksi->id_status_pembayaran == "1" && ($transaksi->id_status_transaksi == "4" || $transaksi->id_status_transaksi == "5" || $transaksi->id_status_transaksi == "6"))
                                 <a class="btn btn-info fw-semibold" href={{ url('admin/transaksi/'. $transaksi->id_transaksi.'/ambil') }} role="button" data-toggle="tooltip" data-placement="top" title="Ambil Laundry">Ambil <i class="fa-solid fa-dolly"></i></a>
                                 @elseif($transaksi -> id_status_transaksi == "3")
@@ -33,56 +33,76 @@
                         </div>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg mb-4 fs-5">
-                            <div class="  d-flex justify-content-between mx-3 mt-2 ">
-                                <p class="text-start"><span class="fw-semibold">Admin</span> : {{ $transaksi->admin->nama }}</p>
-                                <p class="text-end"><span class="fw-semibold">Tanggal</span> : {{ $transaksi->tgl_masuk -> translatedFormat('l, d F Y')}}</p>
-                            </div>
-                            <div class="  d-flex justify-content-between mx-3 mt-0">
-                                <p class="text-start "><span class="fw-semibold">Nomor Transaksi</span> : {{ $transaksi->no_transaksi }}</p>
-                                <p class="text-end"><span class="fw-semibold">Cabang</span> : {{ $transaksi->cabang->nama}}</p>
-                            </div>
                             @php
-                            $poin = App\Models\Poin::where('id_user', $transaksi->id_user)->where('status', 'aktif')->sum('jumlah');
-                            $poinTransaksi = $transaksi->poin_keluar;
+                                $poin = App\Models\Poin::where('id_user', $transaksi->id_user)->where('status', 'aktif')->sum('jumlah');
+                                $poinTransaksi = $transaksi->poin_keluar;
+                                $level = App\Models\User::where('id_user', $transaksi->id_user)->first()->level;
+                                $selesai = date('d/m/Y', strtotime($transaksi->tgl_selesai));
                             @endphp
-                            @if (Auth::user()->level == "admin")
+                            
+                            @if (Auth::user()->level == "admin" && $transaksi -> id_status_transaksi != "7")
+                                <div class="d-flex justify-content-between mx-3 mt-2 ">
+                                    <p class="text-start"><span class="fw-semibold">Admin</span> : {{ $transaksi->admin->nama }}</p>
+                                    <p class="text-end"><span class="fw-semibold">Tanggal Masuk</span> : {{ $transaksi->tgl_masuk -> translatedFormat('l, d F Y')}}</p>
+                                </div>
+                                <div class="d-flex justify-content-between mx-3 mt-0">
+                                    <p class="text-start "><span class="fw-semibold">Nomor Transaksi</span> : {{ $transaksi->no_transaksi }}</p>
+                                    <p class="text-end"><span class="fw-semibold">Cabang</span> : {{ $transaksi->cabang->nama}}</p>
+                                </div>
+
                                 <form method="POST" action="{{ url('admin/transaksi/'. $transaksi->id_transaksi.'/edit/poin') }}">
                                     {{ csrf_field() }} 
                                     <input type="hidden" name="id_transaksi" value="{{ $transaksi->id_transaksi }}">
                                     <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama Pengguna</label>
                                     <div class="row mx-3 g-3 align-items-center">
                                         <div class="col-3">
-                                            <select class="form-control form-control-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}" {{ (($transaksi->id_status_transaksi == "7") || (Auth::user()->level == "pengguna") ? 'disabled' : '') }}>
+                                            <select class="form-select form-select-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}" {{ (($transaksi->id_status_transaksi == "7") ? 'disabled' : '') }}>
                                                 <option value="{{ $transaksi->id_user }}">{{ $transaksi->user->nama }}</option>
-                                                    @foreach ($pengguna as $item)
-                                                    <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
-                                                    @endforeach
+                                                @foreach ($pengguna as $item)
+                                                <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-auto">
                                             <span id="nama" class="form-text">
+                                                @if ($level == "anggota" && $poin != null)
                                                 Poin: {{ $poin }}
+                                                @elseif ($level == "anggota")
+                                                Poin: 0
+                                                @else
+    
+                                                @endif
                                             </span>
                                         </div>
-                                        @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
                                         <div class="col-3">
                                             <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Pengguna">Cek</button></div>
                                         </div> 
-                                        @endif
                                     </div>
                                 </form>
-                            @else
-                                <p class="text-start mx-3 mt-0"><span class="fw-semibold">Nama</span> : {{ $transaksi->user->nama}}</p>
-                            @endif
-                            <form method="POST" action="{{ url('admin/transaksi/detail/'. $transaksi->id_transaksi.'/edit/store') }} ">
-                                {{ csrf_field() }}
 
-                                @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))                                    
+                                <form method="POST" action="{{ url('admin/transaksi/'. $transaksi->id_transaksi.'/edit/tanggal') }}">
+                                    {{ csrf_field() }} 
+                                    <label for="tanggal" class="fw-semibold form-label mx-3 mt-2 mb-0">Tanggal Selesai</label>
+                                    <div class="row mx-3 g-3 align-items-center">
+                                        <div class="col-3">
+                                            <div class="input-group date">
+                                                <input type="text" class="form-control fs-5" name="tanggal" value="{{ $selesai }}"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Ubah Tanggal Selesai">Ubah</button></div>
+                                        </div> 
+                                    </div>
+                                </form>
+                                @include('template.datePicker')
+
+                                <form method="POST" action="{{ url('admin/transaksi/detail/'. $transaksi->id_transaksi.'/edit/store') }} ">
+                                    {{ csrf_field() }}                                   
                                     <div class="row justify-content-start" >
                                         <div class="col-3 ">
                                         <label for="layanan" class="fw-semibold form-label mx-3 mt-2 mb-0">Layanan</label>
                                             <div class="col ms-4">
-                                                <select class="form-control form-control-lg " name="layanan" aria-label="Default select example" value="{{ Session::get('layanan') }}">
+                                                <select class="form-select form-select-lg" name="layanan" aria-label="Default select example" value="{{ Session::get('layanan') }}">
                                                     <option selected disabled>Pilih Layanan</option>
                                                     @foreach ($layanan as $item)
                                                     <option value="{{ $item->id_layanan }}">{{ $item->nama }}</option>
@@ -90,86 +110,66 @@
                                                 </select>
                                             </div>
                                         </div>
-
+    
                                         <div class="col-3">
                                         <label for="jumlah" class="fw-semibold form-label  mt-2 mb-0">Jumlah</label>
                                             <div class="col mx-3">
-                                                <input type="number" id="jumlah" class="form-control form-control-lg" name="jumlah" placeholder="Masukkan Jumlah Layanan" value="{{ Session::get('jumlah') }}"/>
+                                                <input type="number" id="jumlah" class="form-control form-control-lg" name="jumlah" placeholder="Jumlah Layanan" value="{{ Session::get('jumlah') }}"/>
                                             </div>
                                         </div>
-
+    
                                         <div class="col-auto align-self-end mb-1">
                                             <button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Layanan">Tambah</button>
                                         </div>
                                     </div>
-                                @endif
-                            </form>
-                            @include('sweetalert::alert')
-
-                            <div class="card mb-2 mt-3 mx-3">                            
-                                <div class="card-header">
-                                    <i class="fas fa-table me-1"></i>
-                                    <a> <b class="fw-semibold">Detail Transaksi</b></a>
-                                </div>                            
-                                <div class="card-body">
-                                    <table id="datatablesSimple">
-                                        <thead >
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Layanan</th>
-                                                <th>Harga</th>
-                                                <th>Jumlah</th>
-                                                <th>Subtotal</th>
-                                                @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
-                                                <th>Aksi</th>
-                                                @endif
-                                            </tr>
-                                        </thead>
-                                        <tfoot >
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Layanan</th>
-                                                <th>Harga</th>
-                                                <th>Jumlah</th>
-                                                <th>Subtotal</th>
-                                                @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
-                                                <th>Aksi</th>
-                                                @endif
-                                            </tr>
-                                        </tfoot>
-                                        <?php
-                                            $i=1;
-                                        ?>
-                                        <tbody >
-                                            @foreach ($transaksiDetail as $index => $item )
-                                            <tr>
-                                                <form method="POST" action="{{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/edit/update') }}">
-                                                    {{ csrf_field() }}
-                                                    <input type="hidden" name="harga" value="{{ $item -> harga }}">
-                                                    <td>{{ $i++ }}</td>
-                                                    <td>{{ $item -> layanan -> nama }}</td>
-                                                    <td>{{ rupiah($item -> harga) }}</td>
-                                                    @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
-                                                    <td><input type="number" id="jumlah" class="form-control" name="jumlah" value="{{ $item -> jumlah }}"</td>
-                                                    @else
-                                                    <td>{{ $item -> jumlah }} {{ $item -> layanan -> satuan }}</td>
-                                                    @endif
-                                                    <td>{{ rupiah($item -> subtotal) }}</td>
-                                                    @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
-                                                    <td>
-                                                        <button type="submit" class="btn btn-laundry btn-block" data-toggle="tooltip" data-placement="top" title="Edit Layanan"><i class="fa-solid fa-pen"></i></button>
-                                                        <a class="btn btn-danger" href={{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/edit/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus Layanan"><i class="fa-solid fa-trash"></i></a>
-                                                    </td>
-                                                    @endif
-                                                </form>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                </form>
+                            @else
+                                <div class="d-flex justify-content-between mx-3 mt-2 ">
+                                    <p class="text-start"><span class="fw-semibold">Admin</span> : {{ $transaksi->admin->nama }}</p>
+                                    <p class="text-end"><span class="fw-semibold">Tanggal Masuk</span> : {{ $transaksi->tgl_masuk -> translatedFormat('l, d F Y')}}</p>
                                 </div>
-                            </div>
+                                <div class="d-flex justify-content-between mx-3 mt-0">
+                                    <p class="text-start"><span class="fw-semibold">Nomor Transaksi</span> : {{ $transaksi->no_transaksi }}</p>
+                                    <p class="text-end"><span class="fw-semibold">Tanggal Selesai</span> : {{ $transaksi->tgl_selesai -> translatedFormat('l, d F Y')}}</p>
+                                </div>
+                                @if ($transaksi -> tgl_ambil == null)
+                                    <div class="d-flex justify-content-between mx-3 mt-0">
+                                        <p class="text-start"><span class="fw-semibold">Nama</span> : {{ $transaksi->user->nama}}</p>
+                                        <p class="text-end"><span class="fw-semibold">Cabang</span> : {{ $transaksi->cabang->nama}}</p>
+                                    </div>
+                                @else
+                                    <div class="d-flex justify-content-between mx-3 mt-0">
+                                        <p class="text-start"><span class="fw-semibold">Nama</span> : {{ $transaksi->user->nama}}</p>
+                                        <p class="text-end"><span class="fw-semibold">Tanggal Ambil</span> : {{ $transaksi->tgl_ambil -> translatedFormat('l, d F Y')}}</p>
+                                    </div>
+                                    <p class="text-end mx-3 mt-0"><span class="fw-semibold">Cabang</span> : {{ $transaksi->cabang->nama}}</p>
+                                @endif
+                            @endif
 
-                            @if ((Auth::user()->level == "admin"))
+                            @include('sweetalert::alert')
+                            @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
+                                <div class="card mb-4 mt-3 mx-3">                            
+                                    <div class="card-header">
+                                        <i class="fas fa-table me-1"></i>
+                                        <a> <b class="fw-semibold">Detil Layanan</b></a>
+                                    </div>                              
+                                    <div class="card-body table-responsive ">
+                                        @include('transaksi.detilAksi', $detail)
+                                    </div>
+                                </div>
+                            @else
+                                <div class="card mb-4 mt-3 mx-3">                            
+                                    <div class="card-header">
+                                        <i class="fas fa-table me-1"></i>
+                                        <a> <b class="fw-semibold">Detil Layanan</b></a>
+                                    </div>                              
+                                    <div class="card-body table-responsive ">
+                                        @include('transaksi.detil', $detail)
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (Auth::user()->level == "admin" && $transaksi -> id_status_transaksi != "7")
                                 <label for="total_harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Total Harga</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
@@ -180,43 +180,27 @@
                                 <form method="POST" action="{{  url('admin/transaksi/'. $transaksi->id_transaksi.'/edit/diskon')  }}">
                                     {{ csrf_field() }}
                                     <input type="hidden" name="id_transaksi" value="{{ $transaksi->id_transaksi }}">
-                                    @unless ($transaksi->id_pengumuman == null && $transaksi->id_status_transaksi == "7")
                                     <label for="diskon" class="fw-semibold form-label mx-3 mt-2 mb-0">Diskon</label>
-                                    @endunless
                                     <div class="row mx-3 g-3 align-items-center">
-                                        @if ( $transaksi->id_status_transaksi != "7")
-                                            <div class="col-3">
-                                                <select class="form-control form-control-lg " name="diskon" aria-label="Default select example" aria-describedby="diskon" value="{{$transaksi->id_pengumuman}} " {{ (($transaksi->id_status_transaksi == "7") ? 'disabled' : '') }}>
-                                                    @if ($transaksi->id_pengumuman == null )
-                                                        <option selected value="" >Pilih Diskon</option>
-                                                        @foreach ($pengumuman as $item)     
-                                                        <option value="{{ $item->id_pengumuman }}" > {{ $item->judul }} {{ $item->diskon }}% </option>
-                                                        @endforeach                              
-                                                    @else
-                                                        <option value="{{ $transaksi->id_pengumuman }}" > {{ $transaksi->pengumuman->judul }} {{ $transaksi->pengumuman->diskon }}% </option>
-                                                        @foreach ($pengumuman as $item)     
-                                                        <option value="{{ $item->id_pengumuman }}" > {{ $item->judul }} {{ $item->diskon }}% </option>
-                                                        @endforeach  
-                                                        <option value="" >Hapus Diskon</option>
-                                                    @endif
-                                                </select>
-                                            </div>
-                                        @elseif ($transaksi->id_pengumuman != null && $transaksi->id_status_transaksi == "7")
-                                            <div class="col-3">
-                                                <select class="form-control form-control-lg " name="diskon" aria-label="Default select example" aria-describedby="diskon" value="{{$transaksi->id_pengumuman}} " {{ (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
-                                                        <option value="{{ $transaksi->id_pengumuman }}" > {{ $transaksi->pengumuman->judul }} {{ $transaksi->pengumuman->diskon }}% </option>
-                                                        @foreach ($pengumuman as $item)     
-                                                        <option value="{{ $item->id_pengumuman }}" > {{ $item->judul }} {{ $item->diskon }}% </option>
-                                                        @endforeach  
-                                                        <option value="" >Hapus Diskon</option>
-                                                </select>
-                                            </div>
-                                        @endif
-                                        @if ($transaksi->id_status_transaksi != "7")
+                                        <div class="col-3">
+                                            <select class="form-select form-select-lg " name="diskon" aria-label="Default select example" aria-describedby="diskon" value="{{$transaksi->id_pengumuman}} " {{ (($transaksi->id_status_transaksi == "7") ? 'disabled' : '') }}>
+                                                @if ($transaksi->id_pengumuman == null )
+                                                    <option selected value="" >Pilih Diskon</option>
+                                                    @foreach ($pengumuman as $item)     
+                                                    <option value="{{ $item->id_pengumuman }}" > {{ $item->judul }} {{ $item->diskon }}% </option>
+                                                    @endforeach                              
+                                                @else
+                                                    <option value="{{ $transaksi->id_pengumuman }}" > {{ $transaksi->pengumuman->judul }} {{ $transaksi->pengumuman->diskon }}% </option>
+                                                    @foreach ($pengumuman as $item)     
+                                                    <option value="{{ $item->id_pengumuman }}" > {{ $item->judul }} {{ $item->diskon }}% </option>
+                                                    @endforeach  
+                                                    <option value="" >Hapus Diskon</option>
+                                                @endif
+                                            </select>
+                                        </div>
                                         <div class="col-3">
                                             <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Diskon">Cek</button></div>
                                         </div>    
-                                        @endif
                                     </div>     
                                 </form>
                                 
@@ -224,37 +208,28 @@
                                     {{ csrf_field() }} 
                                     <input type="hidden" name="user" value="{{ $transaksi->id_user }}">
                                     
-                                    @if ($transaksi->id_status_transaksi != "7" && ($poin >= 1000 || $transaksi->poin_keluar > 0))
-                                    <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
-                                    <div class="row mx-3 g-3 align-items-center">
-                                        <div class="col-3">
-                                            <select class="form-control form-control-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
-                                                @if($transaksi->poin_keluar != 0)
-                                                <option value="{{ $transaksi->poin_keluar }}" > {{ $transaksi->poin_keluar }} (Rp{{ number_format($transaksi->poin_keluar, 0, ".", ".")}})</option>
-                                                <option value="0">Hapus Poin</option>
-                                                @for ($i = 1000; $i <= $poin + $poinTransaksi; $i = $i+1000)
-                                                    <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
-                                                @endfor
-                                                @else
-                                                <option selected value="0">Gunakan Poin</option>
-                                                @for ($i = 1000; $i <= $poin; $i = $i+1000)
-                                                    <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
-                                                @endfor
-                                                @endif
-                                            </select>
+                                    @if ($poin >= 1000 || $transaksi->poin_keluar > 0)
+                                        <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
+                                        <div class="row mx-3 g-3 align-items-center">
+                                            <div class="col-3">
+                                                <select class="form-select form-select-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
+                                                    @if($transaksi->poin_keluar > 0)
+                                                        <option value="{{ $transaksi->poin_keluar }}" > {{ $transaksi->poin_keluar }} (Rp{{ number_format($transaksi->poin_keluar, 0, ".", ".")}})</option>
+                                                        <option value="0">Hapus Poin</option>
+                                                        @for ($i = 1000; $i <= $poin + $poinTransaksi; $i = $i+1000)
+                                                            <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
+                                                        @endfor
+                                                    @else
+                                                        <option selected value="0">Gunakan Poin</option>
+                                                        @for ($i = 1000; $i <= $poin; $i = $i+1000)
+                                                            <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
+                                                        @endfor
+                                                    @endif
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    @elseif ($transaksi->poin_keluar > 0 && $transaksi->id_status_transaksi == "7" && $poin >= 1000)
-                                    <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
-                                    <div class="row mx-3 g-3 align-items-center">
-                                        <div class="col-3">
-                                            <select class="form-control form-control-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
-                                                <option value="{{ $transaksi->poin_keluar }}" > {{ $transaksi->poin_keluar }} (Rp{{ number_format($transaksi->poin_keluar, 0, ".", ".")}})</option>
-                                            </select>
-                                        </div>
-                                    </div>
                                     @else
-                                    <input type="hidden" id="poin" class="form-control" name="poin"  value="0"/>
+                                        <input type="hidden" id="poin" class="form-control" name="poin"  value="0"/>
                                     @endif
                                     <input type="hidden" id="total_harga" class="form-control" name="total_harga"  value="{{ $transaksi->total_harga }}"/>
 
@@ -270,12 +245,8 @@
                                     <label for="diterima" class="fw-semibold form-label mx-3 mt-2 mb-0">Diterima</label>
                                     <div class="row mx-3 g-3 align-items-center">
                                         <div class="col-3">
-                                            @if ($transaksi->id_status_transaksi != "7")
                                             <input type="number" id="diterima" class="form-control form-control-lg" name="diterima" value="{{ $transaksi->diterima }}"/>
-                                            @else
-                                            <input type="text" id="ter" class="form-control form-control-lg" disabled name="ter" value="Rp{{ number_format($transaksi->diterima, 0, ".", ".")}}"/>
-                                            <input type="hidden" id="diterima" class="form-control" name="diterima" value="{{ $transaksi->diterima }}"/>
-                                            @endif
+                                            {{--  <input type="hidden" id="diterima" class="form-control" name="diterima" value="{{ $transaksi->diterima }}"/>  --}}
                                         </div>
                                     </div>
 
@@ -287,16 +258,8 @@
                                     </div>
 
                                     <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
-                                        <div class="col-auto">
-                                            @if (Auth::user()->level != "pengguna")
-                                            <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi') }}" role="button">Kembali</a>
-                                            @else
-                                            <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('user/transaksi') }}" role="button">Kembali</a>
-                                            @endif
-                                        </div>
-                                        @if ((Auth::user()->level == "admin") && ($transaksi->id_status_transaksi != "7"))
                                         <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Transaksi" >Simpan</button></div>
-                                        @endif
+                                        <div class="col-auto"><a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi') }}" role="button">Kembali</a></div>
                                     </div>
                                 </form>
                             @else
@@ -352,23 +315,23 @@
                                         <p class="text-start fw-semibold">: Rp{{ number_format($transaksi->diterima - $transaksi->total_tagihan, 0, ".", ".")}}</p>
                                     </div>
                                 </div>
-                            @endif
-                            <div class="row mx-3 mb-2 g-3 align-items-center">
-                                <div class="col-auto">
-                                    @if (Auth::user()->level == "owner")
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi') }}" role="button">Kembali</a>
-                                    @elseif (Auth::user()->level == "pengguna")
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('user/transaksi') }}" role="button">Kembali</a>
-                                    @endif
+                                <div class="row mx-3 mb-2 g-3 align-items-center">
+                                    <div class="col-auto">
+                                        @if (Auth::user()->level == "pemilik" || Auth::user()->level == "admin")
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/transaksi') }}" role="button">Kembali</a>
+                                        @elseif (Auth::user()->level == "pelanggan" || Auth::user()->level == "anggota")
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('user/transaksi') }}" role="button">Kembali</a>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </main>
                 {{--  <input type="hidden" id="tagOri" class="form-control" name="tagOri" value="{{ $transaksi->poin_keluar + $transaksi->total_tagihan }}"/>  --}}
-                @include('sweetalert::alert')
             </div>
         </div>
+        @include('sweetalert::alert')
         @include('template.foot')
         <script>
             $(document).ready(function() {

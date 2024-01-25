@@ -24,22 +24,25 @@ class CabangController extends Controller
         Session::flash('nama', $request->nama);
         Session::flash('alamat', $request->alamat);
         Session::flash('no_telp', $request->no_telp);
+        Session::flash('email', $request->email);
 
         $request->validate([
             'nama'=>'required',
             'alamat'=>'required',
             'no_telp'=>'required',
+            'email'=>'required',
         ], [
             'nama.required' => 'nama wajib diisi',
             'alamat.required' => 'alamat wajib diisi',
             'no_telp.required' => 'no_telp wajib diisi',
+            'email.required' => 'email wajib diisi',
         ]);
 
         $no_telp = $request->no_telp;
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
         if ($valid->not_registered != null ){
-            return redirect('owner/cabang/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+            return redirect('pemilik/cabang/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
         if(substr(trim($no_telp), 0, 2)=="62"){
@@ -53,10 +56,11 @@ class CabangController extends Controller
             'nama' => $request->nama,
             'alamat' => $request->alamat,
             'no_telp' => $no_telp,
+            'email' => $request->email,
             'status' => "aktif"
         ]);
         $cabang->save();
-        return redirect('owner/cabang')->with('success', 'Tambah Cabang Sukses');
+        return redirect('pemilik/cabang')->with('success', 'Tambah Cabang Sukses');
     }
 
     public function edit($id){  
@@ -70,17 +74,19 @@ class CabangController extends Controller
             'nama'=>'required',
             'alamat'=>'required',
             'no_telp'=>'required',
+            'email'=>'required',
         ], [
             'nama.required' => 'nama wajib diisi',
             'alamat.required' => 'alamat wajib diisi',
             'no_telp.required' => 'no_telp wajib diisi',
+            'email.required' => 'email wajib diisi',
         ]);
 
         $no_telp = $request->no_telp;
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
         if ($valid->not_registered != null ){
-            return redirect('owner/cabang/'.$id.'/edit')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+            return redirect('pemilik/cabang/'.$id.'/edit')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
         if(substr(trim($no_telp), 0, 2)=="62"){
@@ -92,11 +98,11 @@ class CabangController extends Controller
 
         $cabang->update($request->all());
         $cabang->update(['no_telp' => $no_telp]);
-        return redirect('owner/cabang')->with('success', 'Edit Cabang Sukses');
+        return redirect('pemilik/cabang')->with('success', 'Edit Cabang Sukses');
     }
 
     public function delete($id){  
         Cabang::find($id)->delete();
-        return redirect('owner/cabang')->with('success', 'Hapus Cabang Sukses');
+        return redirect('pemilik/cabang')->with('success', 'Hapus Cabang Sukses');
     }
 }

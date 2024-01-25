@@ -23,24 +23,21 @@
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Pengguna" value="{{ $user->nama }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Pengguna" disabled value="{{ $user->nama }}" />
                                     </div>
                                 </div>
 
                                 <label for="email" class="fw-semibold form-label mx-3 mt-2 mb-0">Email</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="email" id="email" class="form-control form-control-lg" placeholder="Masukkan Email Pengguna" name="email" value="{{ $user->email }}" />
+                                        <input type="email" id="email" class="form-control form-control-lg" placeholder="Email Pengguna" name="email" disabled value="{{ $user->email }}" />
                                     </div>
                                 </div>
 
                                 <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Masukkan Nomor Telepon Pengguna" value="{{ $user->no_telp }}" />
-                                        <div id="no_telp" class="form-text">
-                                            Masukkan nomor tanpa spasi
-                                        </div>
+                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Nomor Telepon Pengguna" disabled value="{{ str_pad(substr($user->no_telp, -4), strlen($user->no_telp), '*', STR_PAD_LEFT) }}" />
                                     </div>
                                 </div>
 
@@ -58,19 +55,28 @@
                                     </div>
                                 @endif
 
-                                <label for="password" class="fw-semibold form-label mx-3 mt-2 mb-0">Password</label>
+                                {{--  <label for="password" class="fw-semibold form-label mx-3 mt-2 mb-0">Password</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class=" form-check form-switch">
                                         <input class="form-check-input" value="on" name="password" type="checkbox" role="switch" id="password">
                                         <label class="form-check-label" for="password">Atur Ulang Password</label>
                                     </div>
-                                </div>
+                                </div>  --}}
 
+                                <input type="hidden" name="level" value="{{ $user->level }}">
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
+                                    @if (Auth::user()->level == "pemilik")
                                     <div class="col-auto">
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user') }}" role="button">Kembali</a>
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/user') }}" role="button">Kembali</a>
                                     </div>
+                                    @else
+                                    <div class="col-auto">
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/user') }}" role="button">Kembali</a>
+                                    </div>
+                                    @endif
+                                    @if($user->id_cabang != null)
                                     <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Pengguna">Simpan</button></div>
+                                    @endif
                                 </div>
                             </form>
                         </div>

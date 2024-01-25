@@ -42,10 +42,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-3 mt-3 form-check form-switch">
-                                        <input class="form-check-input" value="on" name="notifikasi" type="checkbox" role="switch" id="notifikasi" {{  ($user->notifikasi == "on" ? ' checked' : '') }}>
-                                        <label class="form-check-label" for="notifikasi">Notifikasi WhatsApp</label>
-                                    </div>
+                                    @if(auth()->user()->level=="pelanggan" || auth()->user()->level=="anggota")
+                                        <div class="mb-3 mt-3 form-check form-switch">
+                                            <input class="form-check-input" value="on" name="notifikasi" type="checkbox" role="switch" id="notifikasi" {{  ($user->notifikasi == "on" ? ' checked' : '') }}>
+                                            <label class="form-check-label fw-medium" for="notifikasi">Notifikasi WhatsApp</label>
+                                        </div>
+                                    @endif
 
                                     <div class="mt-4 mb-0">
                                         <a type="submit" class="btn btn-secondary btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="v" href="{{ url('password') }}" >Ubah Password</a>
@@ -55,6 +57,28 @@
                                 @include('sweetalert::alert')
                             </div>
                         </div>
+
+                        @if(auth()->user()->level=="pelanggan" )
+                        <div class="card shadow-lg border-0 rounded-lg fs-5 mt-3">
+                            <div class="card-body">
+                                <div class="row mt-2">
+                                    <div class="col-xl-6">
+                                        <div class="card mb-2">
+                                            <div class="card-header fw-semibold fs-5">
+                                                <i class="fa-solid fa-coins"></i>  Loyalty Program
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title fs-4">Dapatkan Potongan Harga Pada Setiap Transaksi Anda!</h5>
+                                                <p class="card-text fs-55">Bergabunglah menjadi anggota loyalty program dan dapatkan  potongan harga berupa poin pada setiap kunjungan anda mulai hari ini!</p>
+                                                <a href=" {{ url('pelanggan/otp') }}" class="btn btn-laundry fw-semibold fs-4">Gabung Sekarang</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                     </div>
                 </main>
                 @include('sweetalert::alert')

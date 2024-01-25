@@ -17,27 +17,27 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
-                            <form method="POST" action="{{ url('owner/layanan/'.$layanan->id_layanan.'/update') }}">
+                            <form method="POST" action="{{ url('pemilik/layanan/'.$layanan->id_layanan.'/update') }}">
                                 {{ csrf_field() }} 
 
                                 <label for="nama" class="fw-semibold form-label mx-3 mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Layanan" value="{{ $layanan->nama }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Layanan" value="{{ $layanan->nama }}" />
                                     </div>
                                 </div>
 
                                 <label for="harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Harga</label>
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
                                     <div class="col-3">
-                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Masukkan Harga Layanan" value="{{ $layanan->harga }}" />
+                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ $layanan->harga }}" />
                                     </div>
                                 </div>
 
                                 <label for="durasi" class="fw-semibold form-label mx-3 mt-2 mb-0">Durasi</label>
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
                                     <div class="col-3">
-                                        <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Masukkan Durasi Layanan" aria-describedby="durasi" value="{{ $layanan->durasi }}"/>
+                                        <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Durasi Layanan" aria-describedby="durasi" value="{{ $layanan->durasi }}"/>
                                     </div>
                                     <div class="col-auto">
                                         <label for="durasi" class="col-form-label">Hari</label>
@@ -68,7 +68,7 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/layanan') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/layanan') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Layanan">Simpan</button></div>
                                 </div>

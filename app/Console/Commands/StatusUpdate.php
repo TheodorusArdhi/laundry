@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Transaksi;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Controllers\WAController;
 
@@ -37,9 +38,12 @@ class StatusUpdate extends Command
             $transaksiDate = Carbon::parse($value->tgl_selesai);
             $hari = $currentDate->diffInDays($transaksiDate, false);
             if($hari <= 0){
-                $transaksi = Transaksi::where('id_transaksi', $value->id_transaksi)->update(['id_status_transaksi' => 4]);
-                $WA = new WAController;
-                $WA->prosesSelesai($value->id_transaksi);
+                Transaksi::where('id_transaksi', $value->id_transaksi)->update(['id_status_transaksi' => 4]);
+                $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->prosesSelesai($value->id_transaksi);
+                }
             }
             \Log::info($hari);
         }
@@ -51,8 +55,11 @@ class StatusUpdate extends Command
             $hari = $currentDate->diffInDays($transaksiDate, false);
             if($hari <= 0){
                 Transaksi::where('id_transaksi', $value->id_transaksi)->update(['id_status_transaksi' => 5]);
-                $WA = new WAController;
-                $WA->hampirBatas($value->id_transaksi);
+                $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->hampirBatas($value->id_transaksi);
+                }
             }
             \Log::info($hari);
         }
@@ -63,8 +70,11 @@ class StatusUpdate extends Command
             $hari = $currentDate->diffInDays($transaksiDate, false);
             if($hari <= 0){
                 Transaksi::where('id_transaksi', $value->id_transaksi)->update(['id_status_transaksi' => 6]);
-                $WA = new WAController;
-                $WA->lebihBatas($value->id_transaksi);
+                $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->lebihBatas($value->id_transaksi);
+                }
             }
             \Log::info($hari);
         }

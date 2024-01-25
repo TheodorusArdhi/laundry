@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Cabang;
+use App\Models\Transaksi;
 use RealRashid\SweetAlert\Facades\Alert;
 use Auth;
 use Session;
@@ -22,7 +23,7 @@ class UserController extends Controller
     }
 
     public function indexAdmin(){  
-        $pengguna = User::whereNot('id_user', Auth::user()->id_user)->where('level', 'pengguna')->get();
+        $pengguna = User::whereNot('id_user', Auth::user()->id_user)->whereIn('level', ['anggota','pelanggan'])->orderBy('level')->get();
         $title = 'Yakin Hapus Pengguna?';
         confirmDelete($title);
         return view('user.index', compact('pengguna'));
@@ -75,7 +76,7 @@ class UserController extends Controller
             'remember_token' => Str::random(60),
             'level' => "admin",
             'id_cabang' => $request->cabang,
-            'notifikasi' => "on",
+            'notifikasi' => null,
         ]);
         $user->save();
         return redirect('admin/user')->with('success', 'Tambah Admin Sukses');
@@ -89,6 +90,40 @@ class UserController extends Controller
 
     public function update(Request $request, $id){  
         $user = User::findorfail($id);
+
+        if (Auth::user()->level == "pemilik" && $request->level == "admin"){
+            $request->validate([
+                'cabang'=>'required',
+            ], [
+                'cabang.required' => 'cabang wajib diisi',
+            ]);
+        }
+
+        $user->update([
+            'id_cabang' => $request->cabang,]);
+        if($request->password == "on"){
+            $user->update([ 'password' => Hash::make($request->email) ]);
+        }
+
+        if (Auth::user()->level == "pemilik"){
+            return redirect('pemilik/user')->with('success', 'Edit Admin Sukses');
+        }else{
+            return redirect('admin/user')->with('success', 'Edit Pengguna Sukses');
+        }
+    }
+
+    public function delete($id){  
+        User::find($id)->delete();
+        return redirect('admin/user')->with('success', 'Hapus Pengguna Sukses');
+    }
+
+    public function profil(){  
+        $user = User::find(Auth::id());
+        $transaksi = Transaksi::where('id_user', Auth::id())->count();
+        return view('profil.index', compact('user', 'transaksi'));
+    }
+
+    public function profilUpdate(Request $request){  
         $request->validate([
             'nama'=>'required',
             'email'=>'required',
@@ -100,19 +135,11 @@ class UserController extends Controller
             'no_telp.regex' => 'nomor telepon tidak valid',
         ]);
 
-        if (Auth::user()->level == "owner"){
-            $request->validate([
-                'cabang'=>'required',
-            ], [
-                'cabang.required' => 'cabang wajib diisi',
-            ]);
-        }
-
         $no_telp = $request->no_telp;
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
         if ($valid->not_registered != null ){
-            return redirect('admin/user/'.$id.'/edit')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
+            return redirect('/profil')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
         if(substr(trim($no_telp), 0, 2)=="62"){
@@ -121,19 +148,13 @@ class UserController extends Controller
         elseif(substr(trim($no_telp), 0, 1)=="0"){
             $no_telp = "62".substr(trim($no_telp), 1);
         }
-
-        $user->update($request->all());
-        $user->update([
-            'no_telp' => $no_telp,
-            'id_cabang' => $request->cabang,]);
-        if($request->password == "on"){
-            $user->update([ 'password' => Hash::make($request->email) ]);
-        }
-        return redirect('admin/user')->with('success', 'Edit Pengguna Sukses');
-    }
-
-    public function delete($id){  
-        User::find($id)->delete();
-        return redirect('admin/user')->with('success', 'Hapus Pengguna Sukses');
+        
+        $user = User::find(Auth::id());
+        $user->nama = $request->nama;
+        $user->email = $request->email;
+        $user->no_telp = $no_telp;
+        $user->notifikasi = $request->notifikasi;
+        $user->save();
+        return redirect('profil')->with('success', 'Ubah Profil Sukses');
     }
 }

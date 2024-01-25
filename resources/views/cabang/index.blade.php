@@ -12,7 +12,7 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Cabang</h1>
-                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/cabang/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Cabang">Tambah <i class="fa-solid fa-plus"></i></a>
+                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/cabang/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Cabang">Tambah <i class="fa-solid fa-plus"></i></a>
                         <div class="card mb-4 mt-2  fs-5">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
@@ -58,13 +58,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a class="btn btn-laundry" href={{ url('owner/cabang/'. $item->id_cabang.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Lihat Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
-                                                {{--  @php
-                                                    $hapus = App\Models\Transaksi::where('id_cabang', $item->id_cabang)->count();
-                                                @endphp
-                                                @if ($hapus == 0)
-                                                    <a class="btn btn-danger" href={{ url('owner/cabang/'. $item->id_cabang.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa-solid fa-trash"></i></a>
-                                                @endif  --}}
+                                                <a class="btn btn-laundry" href={{ url('pemilik/cabang/'. $item->id_cabang.'/edit') }} role="button" data-toggle="tooltip" data-placement="top" title="Lihat Detil"><i class="fa-solid fa-magnifying-glass"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach

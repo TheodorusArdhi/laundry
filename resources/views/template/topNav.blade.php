@@ -10,13 +10,7 @@
     <!-- Navbar-->
     <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
         <li class="nav-item dropdown fw-medium fs-55">
-            @if(auth()->user()->level=="owner")
-            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i> Owner</a>
-            @elseif(auth()->user()->level=="admin")
-            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i> Admin</a>
-            @elseif(auth()->user()->level=="pengguna")
-            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-            @endif
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i> {{ auth()->user()->nama }}</a>
             <ul class="dropdown-menu dropdown-menu-end fw-medium" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item fw-medium fs-6" href="{{ url('profil') }}">Profil</a></li>
                 <li><hr class="dropdown-divider" /></li>

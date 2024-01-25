@@ -21,17 +21,18 @@ return new class extends Migration
             $table->unsignedBigInteger('id_status_transaksi')->nullable();
             $table->unsignedBigInteger('id_pengumuman')->nullable();
             $table->unsignedBigInteger('id_cabang');
+            $table->unsignedBigInteger('id_poin')->nullable();
             $table->string('no_transaksi');
             $table->date('tgl_masuk');
             $table->date('tgl_selesai')->nullable();
             $table->date('tgl_ambil')->nullable();
             $table->date('tgl_tenggat')->nullable();
-            $table->integer('total_harga');
+            $table->integer('total_harga')->default(0);
             $table->integer('diskon')->default(0);
-            $table->integer('poin_masuk');
+            $table->integer('poin_masuk')->default(0);
             $table->integer('poin_keluar')->default(0);
-            $table->integer('total_tagihan');
-            $table->integer('diterima')->nullable();
+            $table->integer('total_tagihan')->default(0);
+            $table->integer('diterima')->default(0);
             $table->timestamps();
 
             $table->foreign('id_user')->references('id_user')->on('users');
@@ -40,6 +41,7 @@ return new class extends Migration
             $table->foreign('id_status_transaksi')->references('id_status')->on('status');
             $table->foreign('id_pengumuman')->references('id_pengumuman')->on('pengumuman');
             $table->foreign('id_cabang')->references('id_cabang')->on('cabang');
+            $table->foreign('id_poin')->references('id_poin')->on('poin');
         });
     }
 

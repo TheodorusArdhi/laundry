@@ -44,7 +44,19 @@ class Reminder extends Command
                 $WA->poinReminder($value->id_poin);
             }
         }
+        
+        $expire = Poin::where('status', 'aktif')->get();
+        foreach ($expire as $value){
+            $tgl_tenggat = Carbon::parse($value->tgl_tenggat);
+            $hari = $currentDate->diffInDays($tgl_tenggat, false);
+            $notifikasi = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari <= 0 && $notifikasi == "on"){
+                $WA = new WAController;
+                $WA->poinExpire($value->id_poin);
+            }
+        }
 
+        //1x seminggu
         $kunjungan = Transaksi::where('id_status_transaksi', 7)->get();
         foreach ($kunjungan as $value){
             $tgl_masuk = Carbon::parse($value->tgl_masuk)->addDays(30);

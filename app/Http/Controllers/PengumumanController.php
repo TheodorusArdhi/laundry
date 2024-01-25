@@ -49,7 +49,7 @@ class PengumumanController extends Controller
             'status' => "aktif"
         ]);
         $pengumuman->save();
-        return redirect('owner/pengumuman')->with('success', 'Tambah Pengumuman Sukses');
+        return redirect('pemilik/pengumuman')->with('success', 'Tambah Pengumuman Sukses');
     }
 
     public function edit($id){  
@@ -71,12 +71,12 @@ class PengumumanController extends Controller
         ]);
 
         $pengumuman->update($request->all());
-        return redirect('owner/pengumuman')->with('success', 'Edit Pengumuman Sukses');
+        return redirect('pemilik/pengumuman')->with('success', 'Edit Pengumuman Sukses');
     }
 
     public function delete($id){  
         Pengumuman::find($id)->delete();
-        return redirect('owner/pengumuman')->with('success', 'Hapus Pengumuman Sukses');
+        return redirect('pemilik/pengumuman')->with('success', 'Hapus Pengumuman Sukses');
     }
 
     public function indexSiaran(){  
@@ -94,11 +94,11 @@ class PengumumanController extends Controller
         //     $temp[$key] = $value->no_telp;
         // }
         // $no_telp = implode(',', $temp);
-        $user = User::where('level', 'pengguna')->select('id_user')->get();
+        $user = User::whereIn("level", ["pelanggan", "anggota"])->where('notifikasi', 'on')->select('id_user')->get();
         foreach($user as $value){
             $WA = new WAController;
             $WA->broadcast($value->id_user, $request->pesan);
         }
-        return redirect('owner/pengumuman')->with('success', 'Siaran Pengumuman Sukses');
+        return redirect('pemilik/pengumuman')->with('success', 'Siaran Pengumuman Sukses');
     }
 }

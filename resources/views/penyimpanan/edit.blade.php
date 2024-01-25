@@ -19,7 +19,7 @@
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('admin/penyimpanan/'.$penyimpanan->id_penyimpanan.'/update') }}">
                                 {{ csrf_field() }} 
-                                @if (Auth::user()->level == "owner")
+                                @if (Auth::user()->level == "pemilik")
                                     <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
                                     <div class="row mx-3 g-3 align-items-center">
                                         <div class="col-3">
@@ -35,28 +35,28 @@
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama Barang</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Barang" value="{{ $penyimpanan->nama }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Barang" value="{{ $penyimpanan->nama }}" />
                                     </div>
                                 </div>
 
                                 <label for="merek" class="fw-semibold form-label mx-3 mt-2 mb-0">Merek</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="merek" class="form-control form-control-lg" name="merek" placeholder="Masukkan Merek Barang" value="{{ $penyimpanan->merek }}" />
+                                        <input type="text" id="merek" class="form-control form-control-lg" name="merek" placeholder="Merek Barang" value="{{ $penyimpanan->merek }}" />
                                     </div>
                                 </div>
 
                                 <label for="jumlah" class="fw-semibold form-label mx-3 mt-2 mb-0">Jumlah</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="number" id="jumlah" class="form-control form-control-lg" name="jumlah" placeholder="Masukkan Jumlah Barang" value="{{ $penyimpanan->jumlah }}" />
+                                        <input type="number" id="jumlah" class="form-control form-control-lg" name="jumlah" placeholder="Jumlah Barang" value="{{ $penyimpanan->jumlah }}" />
                                     </div>
                                 </div>
 
                                 <label for="harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Harga</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="number" id="harga" class="form-control form-control-lg" name="harga" placeholder="Masukkan Harga Barang" value="{{ $penyimpanan->harga }}" />
+                                        <input type="number" id="harga" class="form-control form-control-lg" name="harga" placeholder="Harga Barang" value="{{ $penyimpanan->harga }}" />
                                     </div>
                                 </div>
 

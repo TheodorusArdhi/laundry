@@ -25,14 +25,14 @@
                                 <p class="text-start "><span class="fw-semibold">Nomor Transaksi</span> : {{ $transaksi->no_transaksi }}</p>
                                 <p class="text-end"><span class="fw-semibold">Cabang</span> : {{ $transaksi->cabang->nama}}</p>
                             </div>
-                            
+
                             <form method="POST" action="{{ url('admin/transaksi/poin') }}">
                                 {{ csrf_field() }} 
                                 <input type="hidden" name="id_transaksi" value="{{ $transaksi->id_transaksi }}">
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama Pengguna</label>
                                 <div class="row mx-3 g-3 align-items-center ">
                                     <div class="col-3 ">
-                                        <select class="form-control form-control-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}">
+                                        <select class="form-select form-select-lg select2" name="nama" id="nama" aria-label="Default select example" value="{{ Session::get('nama') }}">
                                             @if ($transaksi->id_user == null)
                                                 <option selected disabled>Pilih Pengguna</option>
                                                 @foreach ($pengguna as $item)
@@ -40,6 +40,7 @@
                                                 @endforeach
                                                 @php
                                                     $poin = null;
+                                                    $level = null;
                                                 @endphp
                                             @else
                                                 <option value="{{ $transaksi->id_user }}">{{ $transaksi->user->nama }}</option>
@@ -47,17 +48,20 @@
                                                 <option value="{{ $item->id_user }}">{{ $item->nama }}</option>
                                                 @endforeach
                                                 @php
-                                                        $poin = App\Models\Poin::where('id_user', $transaksi->id_user)->where('status', 'aktif')->sum('jumlah');
+                                                    $level = App\Models\User::where('id_user', $transaksi->id_user)->first()->level;
+                                                    $poin = App\Models\Poin::where('id_user', $transaksi->id_user)->where('status', 'aktif')->sum('jumlah');
                                                 @endphp
                                             @endif
                                         </select>
                                     </div>
                                     <div class="col-auto">
                                         <span id="nama" class="form-text">
-                                            @if ($poin == null)
+                                            @if ($level == "anggota" && $poin != null)
+                                            Poin: {{ $poin }}
+                                            @elseif ($level == "anggota")
                                             Poin: 0
                                             @else
-                                            Poin: {{ $poin }}
+
                                             @endif
                                         </span>
                                     </div>
@@ -73,7 +77,7 @@
                                     <div class="col-3 mx-3">
                                     <label for="layanan" class="fw-semibold form-label mt-2 mb-0">Layanan</label>
                                         <div class="col ">
-                                            <select class="form-control form-control-lg " name="layanan" aria-label="Default select example" value="{{ Session::get('layanan') }}">
+                                            <select class="form-select form-select-lg " name="layanan" aria-label="Default select example" value="{{ Session::get('layanan') }}">
                                                 <option selected disabled>Pilih Layanan</option>
                                                 @foreach ($layanan as $item)
                                                 <option value="{{ $item->id_layanan }}">{{ $item->nama }}</option>
@@ -85,7 +89,7 @@
                                     <div class="col-3 mx-3">
                                     <label for="jumlah" class="fw-semibold form-label mt-2 mb-0">Jumlah</label>
                                         <div class="col">
-                                            <input type="number" step="any" id="jumlah" class="form-control form-control-lg" placeholder="Masukkan Jumlah Layanan" name="jumlah" value="{{ Session::get('jumlah') }}"/>
+                                            <input type="number" step="any" id="jumlah" class="form-control form-control-lg" placeholder="Jumlah Layanan" name="jumlah" value="{{ Session::get('jumlah') }}"/>
                                         </div>
                                     </div>
 
@@ -95,58 +99,13 @@
                                     </div>
                                 </div>
                             </form>
-                            @include('sweetalert::alert')
-
-                            <div class="card mb-2 mt-3 mx-3">                            
+                            <div class="card mb-4 mt-3 mx-3">                            
                                 <div class="card-header">
                                     <i class="fas fa-table me-1"></i>
-                                    <a> <b class="fw-semibold">Detail Transaksi</b></a>
-                                </div>                            
-                                <div class="card-body">
-                                    <table id="datatablesSimple">
-                                        <thead >
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Layanan</th>
-                                                <th>Harga</th>
-                                                <th>Jumlah</th>
-                                                <th>Subtotal</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot >
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Layanan</th>
-                                                <th>Harga</th>
-                                                <th>Jumlah</th>
-                                                <th>Subtotal</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </tfoot>
-                                        <?php
-                                            $i=1;
-                                        ?>
-                                        <tbody >
-                                            @foreach ($detail as $index => $item )
-                                            <tr>
-                                                <form method="POST" action="{{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/update') }}">
-                                                    <input type="hidden" name="harga" value="{{ $item -> harga }}">
-                                                    {{ csrf_field() }}
-                                                    <td>{{ $i++ }}</td>
-                                                    <td>{{ $item -> layanan -> nama }}</td>
-                                                    <td>{{ rupiah($item -> harga) }}</td>
-                                                    <td><input type="number" step="any" id="jumlah" class="form-control" name="jumlah" value="{{ $item -> jumlah }}"</td>
-                                                    <td>{{ rupiah($item -> subtotal) }}</td>
-                                                    <td>
-                                                        <button type="submit" class="btn btn-laundry btn-block" data-toggle="tooltip" data-placement="top" title="Edit Layanan"><i class="fa-solid fa-pen"></i></button>
-                                                        <a class="btn btn-danger" href={{ url('admin/transaksi/detail/'. $item->id_transaksi_detail.'/delete') }} data-confirm-delete="true" role="button" data-toggle="tooltip" data-placement="top" title="Hapus Layanan"><i class="fa-solid fa-trash"></i></a>
-                                                    </td>
-                                                </form>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                    <a> <b class="fw-semibold">Detil Layanan</b></a>
+                                </div>                       
+                                <div class="card-body table-responsive ">
+                                    @include('transaksi.detilAksi', $detail)
                                 </div>
                             </div>
 
@@ -163,7 +122,7 @@
                                 <label for="diskon" class="fw-semibold form-label mx-3 mt-2 mb-0">Diskon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <select class="form-control form-control-lg " name="diskon" aria-label="Default select example" aria-describedby="diskon" value="{{$transaksi->id_pengumuman}}">
+                                        <select class="form-select form-select-lg " name="diskon" aria-label="Default select example" aria-describedby="diskon" value="{{$transaksi->id_pengumuman}}">
                                             @if ($transaksi->id_pengumuman == null)
                                             <option selected value="" >Pilih Diskon</option>
                                                 @foreach ($pengumuman as $item)     
@@ -191,11 +150,11 @@
                                 <input type="hidden" id="total_tagihan_ori"  class="form-control" name="total_tagihan_ori" value="{{ $transaksi->total_tagihan }}"/>                                           
                                 <input type="hidden" id="total_harga" class="form-control" name="total_harga"  value="{{ $transaksi->total_harga }}"/>
 
-                                @if ($transaksi->id_user != null && $poin >= 1000)
+                                @if ($transaksi->id_user != null && $poin >= 1000 && $level == "anggota")
                                     <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
                                     <div class="row mx-3 g-3 align-items-center">
                                         <div class="col-3">
-                                            <select class="form-control form-control-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7") || (Auth::user()->level == "pengguna")  ? 'disabled' : '') }}>
+                                            <select class="form-select form-select-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
                                                 <option selected value="0">Gunakan Poin</option>
                                                 @for ($i = 1000; $i <= $poin; $i = $i+1000)
                                                     <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
@@ -239,9 +198,9 @@
                         </div>
                     </div>
                 </main>
-                @include('sweetalert::alert')
             </div>
         </div>
+        @include('sweetalert::alert')
         @include('template.foot')
         <script>
             $(document).ready(function() {

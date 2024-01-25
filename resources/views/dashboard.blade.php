@@ -51,11 +51,11 @@
                                 </div>
                             </div>
                         </div>
-                        @if(auth()->user()->level=="admin")
+                        @if(auth()->user()->level=="pemilik")
                         <div class="row">
                             <div class="col-xl-6">
                                 <div class="card mb-4">
-                                    <div class="card-header">
+                                    <div class="card-header fw-semibold fs-5">
                                         <i class="fas fa-chart-area me-1"></i>
                                         Pemasukan
                                     </div>
@@ -72,10 +72,26 @@
                                 </div>
                             </div>  --}}
                         </div>
+                        {{--  @elseif(auth()->user()->level=="pelanggan" && $transaksi > 0 )
+                        <div class="row mt-4">
+                            <div class="col-xl-6">
+                                <div class="card mb-4 ">
+                                    <div class="card-header fw-semibold fs-5">
+                                        <i class="fa-solid fa-coins"></i>  Loyalty Program
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title fs-4">Dapatkan Potongan Harga Pada Setiap Transaksi Anda!</h5>
+                                        <p class="card-text fs-55">Bergabunglah menjadi anggota loyalty program dan dapatkan  potongan harga berupa poin pada setiap kunjungan anda mulai hari ini!</p>
+                                        <a href=" {{ url('pelanggan/otp') }}" class="btn btn-laundry fw-semibold fs-4">Gabung Sekarang</a>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>  --}}
                         @endif
                     </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
+                @include('sweetalert::alert')
+                {{--  <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Your Website 2023</div>
@@ -86,7 +102,7 @@
                             </div>
                         </div>
                     </div>
-                </footer>
+                </footer>  --}}
             </div>
         </div>
         @include('template.foot')
@@ -127,7 +143,7 @@
                     yAxes: [{
                         ticks: {
                         min: 0,
-                        max: round(max($bulanTotal), -5)+100000,
+                        max: {{ round(max($bulanTotal), -5)+100000 }},
                         maxTicksLimit: 5
                         },
                         gridLines: {

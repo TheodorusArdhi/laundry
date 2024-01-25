@@ -126,8 +126,15 @@
                 <td>Tanggal Transaksi</td>
                 <td>{{ $transaksi->created_at-> translatedFormat('l, d F Y H:i') }} WIB</td>
 
+                @php
+                    $level = App\Models\User::where('id_user', $transaksi->id_user)->first()->level;
+                @endphp
+                @if ($level == "anggota")
                 <td>Poin Masuk + kunjungan(100)</td>
                 <td>{{ $transaksi->poin_masuk }}</td>
+                @else
+                    
+                @endif
             </tr>
             <tr>
                 <td>Estimasi Selesai</td>
@@ -136,6 +143,15 @@
                 <td></td>
                 <td></td>
             </tr>
+            @if ($transaksi -> tgl_ambil != null)
+            <tr>
+                <td>Tanggal Ambil</td>
+                <td>{{ $transaksi->tgl_ambil-> translatedFormat('l, d F Y')}} {{ $transaksi->updated_at-> translatedFormat('H:i') }} WIB</td>
+
+                <td></td>
+                <td></td>
+            </tr>
+            @endif
             <tr>
                 <td>Status Pembayaran</td>
                 <td>{{ $transaksi->statusPembayaran->nama }}</td>

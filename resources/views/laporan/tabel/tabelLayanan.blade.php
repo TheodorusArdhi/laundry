@@ -8,10 +8,10 @@
             <th class="text-center" colspan="4">Laporan Layanan {{ $awal }} - {{ $akhir }}</th>
         </tr>
         <tr>
-            <th>Nama</th>
+            <th>Layanan</th>
             <th>Harga</th>
             <th>Jumlah</th>
-            <th>Pemasukan</th>                                          
+            <th>Total</th>                                          
         </tr>  
     </thead>
     <tbody >

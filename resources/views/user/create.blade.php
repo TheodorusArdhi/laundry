@@ -23,21 +23,21 @@
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Masukkan Nama Admin" value="{{ Session::get('nama') }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Admin" value="{{ Session::get('nama') }}" />
                                     </div>
                                 </div>
 
                                 <label for="email" class="fw-semibold form-label mx-3 mt-2 mb-0">Email</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="Masukkan Email Admin" value="{{ Session::get('email') }}" />
+                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="Email Admin" value="{{ Session::get('email') }}" />
                                     </div>
                                 </div>
 
                                 <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Masukkan Nomor Telepon Admin" value="{{ Session::get('no_telp') }}" />
+                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Nomor Telepon Admin" value="{{ Session::get('no_telp') }}" />
                                         <div id="no_telp" class="form-text">
                                             Masukkan nomor tanpa spasi
                                         </div>
@@ -58,7 +58,7 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/user') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/user') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Admin">Simpan</button></div>
                                 </div>

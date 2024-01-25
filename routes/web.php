@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
+// use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PengumumanController;
-use App\Http\Controllers\ProfilController;
+// use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\UserController;
@@ -24,7 +24,7 @@ use App\Http\Controllers\LaporanController;
 | contains the "web" middleware group. Now create something great!
 |
 */   
-    Route::get('/',[HomeController::class,'home']);
+    Route::get('/',[AuthController::class,'home']);
     
     Route::get('/login/index',[AuthController::class,'indexLogin'])->name('indexLogin');
     Route::post('/login',[AuthController::class,'login'])->name('login');
@@ -32,7 +32,7 @@ use App\Http\Controllers\LaporanController;
     Route::post('/register/store',[AuthController::class,'storeRegister'])->name('storeRegister');
     Route::get('/logout',[AuthController::class, 'logout'])->name('logout'); 
 
-Route::prefix('/owner')->middleware(['auth', 'checkLevel:owner'])->group(function () {
+Route::prefix('/pemilik')->middleware(['auth', 'checkLevel:pemilik'])->group(function () {
 
     Route::get('/layanan',[LayananController::class,'index']);
     Route::get('/layanan/create',[LayananController::class,'create']);
@@ -80,6 +80,7 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(functio
     Route::post('/transaksi/diskon',[TransaksiController::class,'diskon'])->name('diskon');
     Route::post('/transaksi/poin',[TransaksiController::class,'poin'])->name('poin');
     Route::post('/transaksi/{id}/edit/poin',[TransaksiController::class,'poinEdit'])->name('poinEdit');
+    Route::post('/transaksi/{id}/edit/tanggal',[TransaksiController::class,'tanggal'])->name('tanggal');
     Route::post('/transaksi/{id}/edit/diskon',[TransaksiController::class,'diskonEdit'])->name('diskonEdit');
     Route::get('/transaksi/{id}/batal',[TransaksiController::class,'batal'])->name('batal');
     Route::get('/transaksi/{id}/lunas',[TransaksiController::class,'lunas']);
@@ -91,11 +92,12 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(functio
     Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
     Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
     Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');
-}); 
-
-Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(function () {
 
     Route::get('/user',[UserController::class,'indexAdmin']);
+}); 
+
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,pemilik'])->group(function () {
+
     Route::post('/user/store',[UserController::class,'store'])->name('store');
     Route::get('/user/{id}/edit',[UserController::class,'edit']);
     Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
@@ -116,20 +118,29 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,owner'])->group(f
     Route::delete('/penyimpanan/{id}/delete',[PenyimpananController::class,'delete'])->name('delete');
 }); 
 
-Route::prefix('/user')->middleware(['auth', 'checkLevel:pengguna'])->group(function () {
+Route::prefix('/anggota')->middleware(['auth', 'checkLevel:anggota'])->group(function () {
     
-    Route::get('/transaksi',[TransaksiController::class,'indexUser']);
-    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editUser']);
     Route::get('/poin',[PoinController::class,'indexUser']);
 }); 
 
-Route::middleware(['auth', 'checkLevel:pengguna,admin,owner'])->group(function () {
+Route::prefix('/pelanggan')->middleware(['auth', 'checkLevel:pelanggan,anggota'])->group(function () {
+    
+    Route::get('/transaksi',[TransaksiController::class,'indexUser']);
+    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editUser']);
+    Route::get('/otp',[AuthController::class,'indexOTP']);
+    Route::get('/otp/input',[AuthController::class,'indexInputOTP']);
+    Route::get('/otp/request',[AuthController::class,'requestOTP']);
+    Route::post('/otp/verify',[AuthController::class,'verifyOTP']);
 
-    Route::get('/dashboard',[HomeController::class,'dashboard']);
+}); 
+
+Route::middleware(['auth', 'checkLevel:pelanggan,anggota,admin,pemilik'])->group(function () {
+
+    Route::get('/dashboard',[AuthController::class,'dashboard']);
     Route::get('/password',[AuthController::class,'indexPassword']);
     Route::post('/password/update',[AuthController::class,'updatePassword'])->name('updatePassword');
-    Route::get('/profil',[ProfilController::class,'index']);
-    Route::post('/profil/update',[ProfilController::class,'update'])->name('update');
+    Route::get('/profil',[UserController::class,'profil']);
+    Route::post('/profil/update',[UserController::class,'profilUpdate'])->name('profilUpdate');
     Route::get('/transaksi/{id}/invoice',[TransaksiController::class,'invoice']);
 
     Route::get('/transaksiNota/{id}',[TransaksiController::class,'transaksiNota']);

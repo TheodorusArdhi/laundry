@@ -22,26 +22,26 @@
                         </ol>
                         @include('template.validate')
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
-                            <form method="POST" action="{{ url('owner/layanan/store') }}">
+                            <form method="POST" action="{{ url('pemilik/layanan/store') }}">
                                 {{ csrf_field() }} 
                                 <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="text" id="nama" class="form-control form-control-lg" placeholder="Masukkan Nama Layanan" name="nama" value="{{ Session::get('nama') }}" />
+                                        <input type="text" id="nama" class="form-control form-control-lg" placeholder="Nama Layanan" name="nama" value="{{ Session::get('nama') }}" />
                                     </div>
                                 </div>
 
                                 <label for="harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Harga</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Masukkan Harga Layanan" value="{{ Session::get('harga') }}" />
+                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ Session::get('harga') }}" />
                                     </div>
                                 </div>
 
                                 <label for="durasi" class="fw-semibold form-label mx-3 mt-2 mb-0">Durasi</label>
                                 <div class="row mx-3 g-3 align-items-center">
                                     <div class="col-3">
-                                        <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Masukkan Durasi Layanan" aria-describedby="durasi" value="{{ Session::get('durasi') }}"/>
+                                        <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Durasi Layanan" aria-describedby="durasi" value="{{ Session::get('durasi') }}"/>
                                     </div>
                                     <div class="col-auto">
                                         <label for="durasi" class="col-form-label">Hari</label>
@@ -61,7 +61,7 @@
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
-                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('owner/layanan') }}" role="button">Kembali</a>
+                                    <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/layanan') }}" role="button">Kembali</a>
                                     </div>
                                     <div class="col-auto"><button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" data-toggle="tooltip" data-placement="top" title="Simpan Layanan">Simpan</button></div>
                                 </div>

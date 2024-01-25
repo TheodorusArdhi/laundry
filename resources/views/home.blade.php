@@ -31,7 +31,7 @@
         <!-- Header-->
         <header class="bg-secondary bg-gradient text-white">
             <div class="container px-4 text-center">
-                <h1 class="fw-bolder">Selamat Datang ke Sinar Laundry</h1>
+                <h1 class="fw-bolder">Selamat Datang di Sinar Laundry</h1>
                 <p class="lead">Bersih, Rapi, Wangi!</p>
             </div>
         </header>
