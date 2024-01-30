@@ -78,8 +78,9 @@ class UserController extends Controller
             'id_cabang' => $request->cabang,
             'notifikasi' => null,
         ]);
+        //dd($user);
         $user->save();
-        return redirect('admin/user')->with('success', 'Tambah Admin Sukses');
+        return redirect('pemilik/user')->with('success', 'Tambah Admin Sukses');
     }
 
     public function edit($id){  
@@ -90,14 +91,11 @@ class UserController extends Controller
 
     public function update(Request $request, $id){  
         $user = User::findorfail($id);
-
-        if (Auth::user()->level == "pemilik" && $request->level == "admin"){
-            $request->validate([
-                'cabang'=>'required',
-            ], [
-                'cabang.required' => 'cabang wajib diisi',
-            ]);
-        }
+        $request->validate([
+            'cabang'=>'required',
+        ], [
+            'cabang.required' => 'cabang wajib diisi',
+        ]);
 
         $user->update([
             'id_cabang' => $request->cabang,]);
@@ -105,11 +103,7 @@ class UserController extends Controller
             $user->update([ 'password' => Hash::make($request->email) ]);
         }
 
-        if (Auth::user()->level == "pemilik"){
-            return redirect('pemilik/user')->with('success', 'Edit Admin Sukses');
-        }else{
-            return redirect('admin/user')->with('success', 'Edit Pengguna Sukses');
-        }
+        return redirect('pemilik/user')->with('success', 'Edit Admin Sukses');
     }
 
     public function delete($id){  

@@ -12,7 +12,7 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Cabang</h1>
-                        <ol class="breadcrumb mb-4">
+                        <ol class="breadcrumb mb-2">
                             <li class="breadcrumb-item active">Edit Cabang</li>
                         </ol>
                         @include('template.validate')
@@ -20,30 +20,24 @@
                             <form method="POST" action="{{ url('pemilik/cabang/'.$cabang->id_cabang.'/update') }}">
                                 {{ csrf_field() }} 
 
-                                <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="nama" class="fw-semibold form-label mt-2 mb-0">Nama</label>
                                         <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Cabang" value="{{ $cabang->nama }}" />
                                     </div>
-                                </div>
-
-                                <label for="email" class="fw-semibold form-label mx-3 mt-2 mb-0">Email</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="nama@email.com" value="{{ $cabang->email }}" />
-                                    </div>
-                                </div>
-
-                                <label for="alamat" class="fw-semibold form-label mx-3 mt-2 mb-0">Alamat</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="alamat" class="fw-semibold form-label mt-2 mb-0">Alamat</label>
                                         <input type="text" id="alamat" class="form-control form-control-lg" name="alamat" placeholder="Alamat Cabang" value="{{ $cabang->alamat }}" />
                                     </div>
                                 </div>
 
-                                <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6 align-self-start">
+                                        <label for="email" class="fw-semibold form-label mt-2 mb-0">Email</label>
+                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="nama@email.com" value="{{ $cabang->email }}" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="no_telp" class="fw-semibold form-label mt-2 mb-0">Nomor Telepon</label>
                                         <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Nomor Telepon Cabang" value="{{ $cabang->no_telp }}" />
                                         <div id="no_telp" class="form-text">
                                             Masukkan nomor tanpa spasi
@@ -51,16 +45,16 @@
                                     </div>
                                 </div>
 
-                                <label for="status" class="fw-semibold form-label mx-3 mt-2 mb-0">Status</label>
-                                    <div class="row mx-3 g-3 align-items-center">
-                                        <div class="col-3">
-                                            <select class="form-control form-control-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
-                                                <option value="{{ $cabang->status }}">{{ $cabang->status }}</option>
-                                                <option value="aktif">Aktif</option>
-                                                <option value="tidak aktif">Tidak Aktif</option>
-                                            </select>
-                                        </div>
+                                <div class="row mx-3 g-3 align-items-center">
+                                    <div class="col-6 mt-0">
+                                        <label for="status" class="fw-semibold form-label mt-2 mb-0">Status</label>
+                                        <select class="form-select form-select-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
+                                            <option value="{{ $cabang->status }}">{{ $cabang->status }}</option>
+                                            <option value="aktif">Aktif</option>
+                                            <option value="tidak aktif">Tidak Aktif</option>
+                                        </select>
                                     </div>
+                                </div>
 
                                 <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
                                     <div class="col-auto">
@@ -72,6 +66,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

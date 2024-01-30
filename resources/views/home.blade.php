@@ -25,7 +25,7 @@
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end me-1">
                 <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('login/index') }}">Login</a>
-                <a class="btn btn-dark fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}">Register</a>
+                <a class="btn btn-dark fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}">Registrasi</a>
             </div>
         </nav>
         <!-- Header-->

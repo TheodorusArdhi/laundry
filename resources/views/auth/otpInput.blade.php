@@ -3,6 +3,13 @@
     <head>
         @include('template.head')
         <title>OTP - Sinar Laundry</title>
+        <style>
+            #spin{
+                width:100%;
+                height:100%;
+                position: absolute;
+              }
+        </style>
     </head>
     <body class="bg-secondary">
         <div id="layoutAuthentication">
@@ -27,7 +34,13 @@
                                         </form>                                        
                                     </div>
                                     <div class="card-footer text-start py-3">
-                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pelanggan/otp') }}" role="button" >Kembali</a>
+                                        <div id="spin">
+                                            <button class="btn btn-danger fw-semibold" disabled style="font-size: 1.12rem; width: 90px !important; opacity: 100%;" type="button">  
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                <span id="timer"></span>
+                                            </button>
+                                        </div>
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pelanggan/otp/request') }}" role="button" >Coba Lagi</a>
                                     </div>
                                 </div>
                             </div>
@@ -52,5 +65,38 @@
             </div>  --}}
         </div>
         @include('template.foot')
+        <script>
+            var delay = {{ $waktu }};
+            setTimeout(function() 
+                {  
+                    $( "#spin" ).fadeOut( "slow" );
+                },
+                delay
+            );
+
+            document.getElementById('timer').innerHTML = {{ $menit[0] }} + ":" + {{ $menit[1] }};
+                startTimer();
+
+                function startTimer() {
+                    var presentTime = document.getElementById('timer').innerHTML;
+                    var timeArray = presentTime.split(/[:]+/);
+                    var m = timeArray[0];
+                    var s = checkSecond((timeArray[1] - 1));
+                    if(s==59){m=m-1}
+                    if(m<0){
+                        return
+                    }
+                    
+                    document.getElementById('timer').innerHTML = m + ":" + s;
+                    console.log(m)
+                    setTimeout(startTimer, 1000);
+                }
+
+                function checkSecond(sec) {
+                if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+                if (sec < 0) {sec = "59"};
+                return sec;
+                }
+        </script>
     </body>
 </html>

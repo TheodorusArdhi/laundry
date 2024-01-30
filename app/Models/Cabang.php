@@ -12,6 +12,6 @@ class Cabang extends Model
     protected $table = 'cabang';
     protected $primaryKey = 'id_cabang';
     protected $fillable = [
-        'nama', 'alamat', 'no_telp', 'status'
+        'nama', 'alamat', 'no_telp', 'status', 'email'
     ];
 }

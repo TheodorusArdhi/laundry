@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered table-hover me-2 " >
+<table class="table table-striped table-bordered table-hover me-2 " id="dtBasicExample">
     <thead class="table-dark">
         @php
             $awal = Carbon\Carbon::createFromFormat('Y-m-d', $awal)->format('d-m-Y');
@@ -39,3 +39,4 @@
         </tr>
     </tbody>                            
 </table>
+

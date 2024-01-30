@@ -19,28 +19,24 @@
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('pemilik/pengumuman/store') }}">
                                 {{ csrf_field() }} 
-
-                                <label for="judul" class="fw-semibold form-label mx-3 mt-2 mb-0">Judul</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="judul" class="fw-semibold form-label mt-2 mb-0">Judul</label>
                                         <input type="text" id="judul" class="form-control form-control-lg" name="judul" placeholder="Judul Pengumuman" value="{{ Session::get('judul') }}" />
                                     </div>
-                                </div>
-
-                                <label for="deskripsi" class="fw-semibold form-label mx-3 mt-2 mb-0">Deskripsi</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Deskripsi Pengumuman" >{{ Session::get('deskripsi') }}</textarea>
-                                    </div>
-                                </div>
-
-                                <label for="diskon" class="fw-semibold form-label mx-3 mt-2 mb-0">Diskon</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-5">
+                                        <label for="diskon" class="fw-semibold form-label mt-2 mb-0">Diskon</label>
                                         <input type="number" id="diskon" class="form-control form-control-lg" name="diskon" placeholder="Jumlah Diskon" aria-describedby="diskon" value="{{ Session::get('diskon') }}"/>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto align-self-end mb-1">
                                         <label for="diskon" class="col-form-label">%</label>
+                                    </div>
+                                </div>
+
+                                <div class="row mx-3 g-3 align-items-center">
+                                    <div class="col-12">
+                                        <label for="deskripsi" class="fw-semibold form-label mt-2 mb-0">Deskripsi</label>
+                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Deskripsi Pengumuman" >{{ Session::get('deskripsi') }}</textarea>
                                     </div>
                                 </div>
 
@@ -54,6 +50,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

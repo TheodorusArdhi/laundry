@@ -13,6 +13,7 @@ class CabangController extends Controller
         $cabang = Cabang::all();
         $title = 'Yakin Hapus Cabang?';
         confirmDelete($title);
+
         return view('cabang.index', compact('cabang'));
     }
 
@@ -70,6 +71,7 @@ class CabangController extends Controller
 
     public function update(Request $request, $id){  
         $cabang = Cabang::findorfail($id);
+        //dd($request);
         $request->validate([
             'nama'=>'required',
             'alamat'=>'required',
@@ -96,8 +98,12 @@ class CabangController extends Controller
             $no_telp = "62".substr(trim($no_telp), 1);
         }
 
-        $cabang->update($request->all());
-        $cabang->update(['no_telp' => $no_telp]);
+        $cabang->update([
+            'nama' => $request->nama,
+            'alamat' => $request->alamat,
+            'no_telp' => $no_telp,
+            'email' => $request->email,
+            'status' => $request->status]);
         return redirect('pemilik/cabang')->with('success', 'Edit Cabang Sukses');
     }
 

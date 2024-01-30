@@ -61,7 +61,6 @@ class LayananController extends Controller
             'harga'=>'required',
             'durasi'=>'required',
             'satuan'=>'required',
-
         ], [
             'nama.required' => 'nama wajib diisi',
             'harga.required' => 'harga wajib diisi',

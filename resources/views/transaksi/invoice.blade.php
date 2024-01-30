@@ -86,8 +86,17 @@
             color: #fff;
         }
 
+        .bg-laundry {
+            background-color: #C9D30a;
+            color: #000;
+        }
+        
         .bg-primary-light {
             background-color: #eef2f9;
+        }
+
+        .bg-laundry-light {
+            background-color: #feffef;
         }
 
     </style>
@@ -102,7 +111,7 @@
                     <span>Telepon: {{ $cabang->no_telp }}</span>
                 </th>
             </tr>
-            <tr class="bg-primary">
+            <tr class="bg-laundry">
                 <th colspan="2">Detail Transaksi</th>
                 <th colspan="2">Customer</th>
             </tr>
@@ -167,7 +176,7 @@
             <tr>
                 <th class="no-border text-start total-heading" colspan="5">Detail Layanan</th>
             </tr>
-            <tr class="bg-primary">
+            <tr class="bg-laundry">
                 <th>No</th>
                 <th>Layanan</th>
                 <th>Harga</th>
@@ -192,18 +201,18 @@
                 <td>{{ rupiah($item -> subtotal) }}</td>
             </tr>
             @endforeach
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="mid-heading"><small>Total Harga</small></td>
                 <td colspan="1" class="mid-heading"><small>{{ rupiah($transaksi->total_harga) }}</small></td>
             </tr>
             @if ($transaksi->poin_keluar != 0)
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="mid-heading"><small>Poin Keluar</small></td>
                 <td colspan="1" class="mid-heading"><small>-{{ rupiah($transaksi->poin_keluar) }}</small></td>
             </tr>
             @endif
             @if ($transaksi->id_pengumuman != null)
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="mid-heading"><small>Diskon {{ $transaksi->pengumuman->judul }} {{ $transaksi->pengumuman->diskon }}%</small></td>
                 @php
                 $diskon = $transaksi->total_harga * ($transaksi->diskon / 100);
@@ -212,15 +221,15 @@
             </tr>
             @endif
 
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="total-heading">Total Tagihan</td>
                 <td colspan="1" class="total-heading">{{ rupiah($transaksi->total_tagihan) }}</td>
             </tr>
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="mid-heading"><small>Diterima</small></td>
                 <td colspan="1" class="mid-heading"><small>{{ rupiah($transaksi->diterima) }}</small></td>
             </tr>
-            <tr class="bg-primary-light">
+            <tr class="bg-laundry-light">
                 <td colspan="4" class="total-heading">Kembali</td>
                 <td colspan="1" class="total-heading">
                     @if(($transaksi->diterima - $transaksi->total_tagihan) <1)

@@ -15,14 +15,14 @@ class StatusUpdate extends Command
      *
      * @var string
      */
-    protected $signature = 'transaksi:statusUpdate';
+    protected $signature = 'status:statusUpdate';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Transaksi Status Update';
+    protected $description = 'Status Update Everyday';
 
     /**
      * Execute the console command.
@@ -77,6 +77,33 @@ class StatusUpdate extends Command
                 }
             }
             \Log::info($hari);
+        }
+
+        $poin = Poin::where('status', 'aktif')->get();
+        foreach ($poin as $value){
+            $tgl_tenggat = Carbon::parse($value->tgl_tenggat)->subDays(14);
+            $hari = $currentDate->diffInDays($tgl_tenggat, false);
+            $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari <= 0){
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->poinReminder($value->id_poin);
+                }
+            }
+        }
+        
+        $expire = Poin::where('status', 'aktif')->get();
+        foreach ($expire as $value){
+            $tgl_tenggat = Carbon::parse($value->tgl_tenggat);
+            $hari = $currentDate->diffInDays($tgl_tenggat, false);
+            $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari <= 0){
+                Poin::where('id_poin', $value->id_poin)->update(['status' => 'tidak aktif']);
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->poinExpire($value->id_poin);
+                }
+            }
         }
     }
 }

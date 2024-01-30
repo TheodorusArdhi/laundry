@@ -24,33 +24,27 @@
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('pemilik/layanan/store') }}">
                                 {{ csrf_field() }} 
-                                <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="nama" class="fw-semibold form-label mt-2 mb-0">Nama</label>
                                         <input type="text" id="nama" class="form-control form-control-lg" placeholder="Nama Layanan" name="nama" value="{{ Session::get('nama') }}" />
                                     </div>
-                                </div>
-
-                                <label for="harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Harga</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ Session::get('harga') }}" />
-                                    </div>
-                                </div>
-
-                                <label for="durasi" class="fw-semibold form-label mx-3 mt-2 mb-0">Durasi</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-5">
+                                        <label for="durasi" class="fw-semibold form-label mt-2 mb-0">Durasi</label>
                                         <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Durasi Layanan" aria-describedby="durasi" value="{{ Session::get('durasi') }}"/>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto align-self-end mb-1">
                                         <label for="durasi" class="col-form-label">Hari</label>
                                     </div>
                                 </div>
 
-                                <label for="satuan" class="fw-semibold form-label mx-3 mt-2 mb-0">Satuan</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="harga" class="fw-semibold form-label mt-2 mb-0">Harga</label>
+                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ Session::get('harga') }}" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="satuan" class="fw-semibold form-label mt-2 mb-0">Satuan</label>
                                         <select class="form-select form-select-lg" name="satuan" aria-label="Default select example" value="{{ Session::get('satuan') }}">
                                             <option selected disabled>Pilih Satuan</option>
                                             <option value="kg">Kg</option>
@@ -69,6 +63,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

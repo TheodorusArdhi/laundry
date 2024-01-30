@@ -40,7 +40,7 @@ class AuthController extends Controller
 
         $request->validate([
             'nama'=>'required',
-            'email'=>'required|unique:users',
+            'email'=>'required|unique:users|email:rfc,dns',
             'no_telp'=>['required','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/','unique:users'],
             'password'=>'required|min:8',
             'passwordConfirm'=>'required|same:password'
@@ -48,6 +48,7 @@ class AuthController extends Controller
             'nama.required' => 'Nama Wajib Diisi',
             'email.required' => 'Email Wajib Diisi',
             'email.unique' => 'Email sudah terpakai',
+            'email.email' => 'Email tidak valid',
             'no_telp.required' => 'Nomor telepon Wajib Diisi',
             'no_telp.regex' => 'Nomor telepon tidak valid',
             'no_telp.unique' => 'Nomor telepon sudah terpakai',
@@ -56,6 +57,7 @@ class AuthController extends Controller
             'password.min' => 'Karakter Password minimal 8',
             'passwordConfirm.same' => 'Konfirmasi password tidak sama'
         ]);
+
         $no_telp = $request->no_telp;
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
@@ -135,7 +137,10 @@ class AuthController extends Controller
     }
     
     public function indexInputOTP(){
-        return view('auth.otpInput');
+        $DB = OTP::where('id_user', Auth::user()->id_user);
+        $waktu = (300 - (time() - $DB->first()->waktu)) * 1000;
+        $menit = explode(':',date("i:s", 300 - (time() - $DB->first()->waktu)));
+        return view('auth.otpInput', compact('waktu', 'menit'));
     }
 
     public function requestOTP(){
@@ -162,9 +167,9 @@ class AuthController extends Controller
             'target' => $nomor,
             'message' => "Sinar Laundry Loyalty Program
 
-Kode OTP Anda : ".$otp."
+Kode OTP Anda : *".$otp."*
 
-(berlaku 5 menit). Demi keamanan akun Anda, mohon TIDAK MEMBERIKAN kode OTP kepada siapapun."
+(berlaku 5 menit). Demi keamanan akun Anda, mohon *TIDAK MEMBERIKAN* kode OTP kepada siapapun."
 
         ];
   
@@ -172,7 +177,7 @@ Kode OTP Anda : ".$otp."
             $curl,
             CURLOPT_HTTPHEADER,
             array(
-                "Authorization: Jv-ZUx0YHVq#NEu5AJPz",
+                "Authorization: M@xN@_FMvK9qSdTShMhi",
             )
         );
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
@@ -191,11 +196,11 @@ Kode OTP Anda : ".$otp."
     public function verifyOTP(Request $request){
         $user = User::where('id_user', Auth::user()->id_user);
         $nomor = $user->first()->no_telp;
-        $DB = OTP::where('id_user', Auth::user()->id_user)->where('otp', $request->otp);
+        $DB = OTP::where('id_user', Auth::user()->id_user);
+        $waktu = $DB->first()->waktu;
 
-        if ($DB->count() > 0) {
-            $waktu = $DB->first()->waktu;
-            if (time() - $waktu <= 300) {
+        if ($DB->where('otp', $request->otp)->count() > 0) {
+            if (time() - $waktu <= 300 ) { //300
                 $user->update(['level' => "anggota"]);
                 $WA = new WAController;
                 $WA->anggota(Auth::user()->id_user);
@@ -204,7 +209,11 @@ Kode OTP Anda : ".$otp."
                 return redirect('/pelanggan/otp')->with('error', 'Kode OTP Kadaluarsa, Silahkan Coba Lagi');
             }
         } else {
-            return redirect('/pelanggan/otp/input')->with('error', 'Kode OTP Salah');
+            if (time() - $waktu <= 300 ) { //300
+                return redirect('/pelanggan/otp/input')->with('error', 'Kode OTP Salah');
+            } else {
+                return redirect('/pelanggan/otp')->with('error', 'Kode OTP Kadaluarsa, Silahkan Coba Lagi');
+            }
         }
     }
 

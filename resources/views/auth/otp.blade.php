@@ -24,7 +24,7 @@
 
                                     </div>
                                     <div class="card-footer text-start py-3">
-                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('/dashboard') }}" role="button" >Kembali</a>
+                                        <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('/profil') }}" role="button" >Kembali</a>
                                     </div>
                                 </div>
                             </div>

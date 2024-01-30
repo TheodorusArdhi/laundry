@@ -10,7 +10,7 @@
             @include('template.sideNav')
             <div id="layoutSidenav_content">
                 <main>
-                    <div class="container-fluid px-4  fs-5">
+                    <div class="container-fluid px-4 fs-5">
                         <h1 class="mt-4">Penyimpanan</h1>
                         <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('admin/penyimpanan/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Barang">Tambah <i class="fa-solid fa-plus"></i></a>
                         @if (Auth::user()->level == "pemilik")
@@ -34,7 +34,7 @@
                             </form>
                         @endif
                         @include('sweetalert::alert')
-                        <div class="card mb-4 mt-2 ">                            
+                        <div class="card mb-4 mt-3 ">                            
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 <a> <b class="fw-semibold"></b></a>
@@ -90,9 +90,10 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
+                @include('sweetalert::alert')
             </div>
         </div>
-        @include('sweetalert::alert')
         @include('template.foot')
     </body>
 </html>

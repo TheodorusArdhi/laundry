@@ -12,7 +12,7 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Pengumuman</h1>
-                        <ol class="breadcrumb mb-4">
+                        <ol class="breadcrumb mb-2">
                             <li class="breadcrumb-item active">Edit Pengumuman</li>
                         </ol>
                         @include('template.validate')
@@ -20,33 +20,30 @@
                             <form method="POST" action=" {{ url('pemilik/pengumuman/'. $pengumuman->id_pengumuman.'/update') }}">
                                 {{ csrf_field() }} 
 
-                                <label for="judul" class="fw-semibold form-label mx-3 mt-2 mb-0">Judul</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="judul" class="fw-semibold form-label mt-2 mb-0">Judul</label>
                                         <input type="text" id="judul" class="form-control form-control-lg" name="judul" placeholder="Judul Pengumuman" value="{{ $pengumuman->judul }}" />
                                     </div>
-                                </div>
-
-                                <label for="deskripsi" class="fw-semibold form-label mx-3 mt-2 mb-0">Deskripsi</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Dskripsi Pengumuman">{{ $pengumuman->deskripsi }}</textarea>
-                                    </div>
-                                </div>
-
-                                <label for="diskon" class="fw-semibold form-label mx-3 mt-2 mb-0">Diskon</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-5">
+                                        <label for="diskon" class="fw-semibold form-label mt-2 mb-0">Diskon</label>
                                         <input type="number" id="diskon" class="form-control form-control-lg" name="diskon" placeholder="Jumlah Diskon" aria-describedby="diskon" value="{{ $pengumuman->diskon }}"/>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto align-self-end mb-1">
                                         <label for="diskon" class="col-form-label">%</label>
                                     </div>
                                 </div>
 
-                                <label for="status" class="fw-semibold form-label mx-3 mt-2 mb-0">Status</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-12">
+                                        <label for="deskripsi" class="fw-semibold form-label mt-2 mb-0">Deskripsi</label>
+                                        <textarea  class="form-control form-control-lg" name="deskripsi" id="deskripsi" placeholder="Dskripsi Pengumuman">{{ $pengumuman->deskripsi }}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row mx-3 g-3 align-items-center">
+                                    <div class="col-6">
+                                        <label for="status" class="fw-semibold form-label mt-2 mb-0">Status</label>
                                         <select class="form-select form-select-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
                                             <option value="{{ $pengumuman->status }}">{{ $pengumuman->status }}</option>
                                             <option value="aktif">Aktif</option>
@@ -65,6 +62,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

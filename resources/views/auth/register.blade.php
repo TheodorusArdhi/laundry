@@ -12,7 +12,7 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-7">
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Pendaftaran</h3></div>
+                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Registrasi</h3></div>
                                     <div class="card-body">
                                         @include('template.validate')
                                         <form method="POST" action="{{ url('register/store') }}">
@@ -52,7 +52,7 @@
 
                                             <div class="mt-4 mb-0">
                                                 <div class="d-grid">
-                                                    <button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" role="button" data-toggle="tooltip" data-placement="top" title="Daftar Akun">Daftar</button>
+                                                    <button type="submit" class="btn btn-laundry btn-block fw-semibold" style="font-size: 1.12rem;" role="button" data-toggle="tooltip" data-placement="top" title="Registrasi Akun">Registrasi</button>
                                                 </div>
                                             </div>
                                         </form>

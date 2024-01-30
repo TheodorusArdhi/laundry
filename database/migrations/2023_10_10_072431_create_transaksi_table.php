@@ -21,7 +21,6 @@ return new class extends Migration
             $table->unsignedBigInteger('id_status_transaksi')->nullable();
             $table->unsignedBigInteger('id_pengumuman')->nullable();
             $table->unsignedBigInteger('id_cabang');
-            $table->unsignedBigInteger('id_poin')->nullable();
             $table->string('no_transaksi');
             $table->date('tgl_masuk');
             $table->date('tgl_selesai')->nullable();
@@ -41,8 +40,7 @@ return new class extends Migration
             $table->foreign('id_status_transaksi')->references('id_status')->on('status');
             $table->foreign('id_pengumuman')->references('id_pengumuman')->on('pengumuman');
             $table->foreign('id_cabang')->references('id_cabang')->on('cabang');
-            $table->foreign('id_poin')->references('id_poin')->on('poin');
-        });
+         });
     }
 
     /**

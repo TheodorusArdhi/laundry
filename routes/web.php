@@ -9,7 +9,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\PoinController;
+// use App\Http\Controllers\PoinController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\PenyimpananController;
 use App\Http\Controllers\LaporanController;
@@ -68,10 +68,23 @@ Route::prefix('/pemilik')->middleware(['auth', 'checkLevel:pemilik'])->group(fun
     Route::post('/laporan/layanan/tanggal',[LaporanController::class,'tanggalLayanan']);
     Route::get('/penjualan/export/{awal}/{akhir}',[LaporanController::class, 'penjualanExport']);
     Route::get('/layanan/export/{awal}/{akhir}',[LaporanController::class, 'layananExport']);
+    Route::get('/layanan/print/{awal}/{akhir}',[LaporanController::class, 'layananPrint']);
+    Route::get('/penjualan/print/{awal}/{akhir}',[LaporanController::class, 'penjualanPrint']);
 }); 
 
 Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(function () {
 
+    Route::get('/user',[UserController::class,'indexAdmin']);
+}); 
+
+Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,pemilik'])->group(function () {
+
+    Route::post('/user/store',[UserController::class,'store'])->name('store');
+    Route::get('/user/{id}/edit',[UserController::class,'edit']);
+    Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
+    Route::delete('/user/{id}/delete',[UserController::class,'delete'])->name('delete');
+
+    Route::get('/transaksi',[TransaksiController::class,'indexAdmin']);
     Route::get('/transaksi/data',[TransaksiController::class,'data']);
     Route::get('/transaksi/create',[TransaksiController::class,'create']);
     Route::post('/transaksi/store',[TransaksiController::class,'store'])->name('store');
@@ -91,24 +104,10 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin'])->group(functio
     Route::delete('/transaksi/detail/{id}/delete',[TransaksiDetailController::class,'delete'])->name('delete');
     Route::post('/transaksi/detail/{id}/edit/store',[TransaksiDetailController::class,'storeEdit'])->name('storeEdit');
     Route::post('/transaksi/detail/{id}/edit/update',[TransaksiDetailController::class,'updateEdit'])->name('updateEdit');
-    Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');
+    Route::delete('/transaksi/detail/{id}/edit/delete',[TransaksiDetailController::class,'deleteEdit'])->name('deleteEdit');   
 
-    Route::get('/user',[UserController::class,'indexAdmin']);
-}); 
-
-Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,pemilik'])->group(function () {
-
-    Route::post('/user/store',[UserController::class,'store'])->name('store');
-    Route::get('/user/{id}/edit',[UserController::class,'edit']);
-    Route::post('/user/{id}/update',[UserController::class,'update'])->name('update');
-    Route::delete('/user/{id}/delete',[UserController::class,'delete'])->name('delete');
-
-    Route::get('/transaksi',[TransaksiController::class,'indexAdmin']);
-    Route::get('/transaksi/{id}/edit',[TransaksiController::class,'editAdmin'])->name('editAdmin');
-
-
-    Route::get('/poin',[PoinController::class,'indexAdmin']);
-    Route::post('/poin/user',[PoinController::class,'poin']);
+    Route::get('/poin',[TransaksiController::class,'poinAdmin']);
+    Route::post('/poin/user',[TransaksiController::class,'poinRequest']);
 
     Route::get('/penyimpanan',[PenyimpananController::class,'index']);
     Route::get('/penyimpanan/create',[PenyimpananController::class,'create']);
@@ -120,7 +119,7 @@ Route::prefix('/admin')->middleware(['auth', 'checkLevel:admin,pemilik'])->group
 
 Route::prefix('/anggota')->middleware(['auth', 'checkLevel:anggota'])->group(function () {
     
-    Route::get('/poin',[PoinController::class,'indexUser']);
+    Route::get('/poin',[TransaksiController::class,'poinUser']);
 }); 
 
 Route::prefix('/pelanggan')->middleware(['auth', 'checkLevel:pelanggan,anggota'])->group(function () {

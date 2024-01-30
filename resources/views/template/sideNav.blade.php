@@ -36,13 +36,13 @@
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-receipt ms-1"></i></div>
                         Transaksi
                     </a>
-                    <a class="nav-link" href="{{ url('pemilik/user') }}">
-                        <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
-                        Pengguna
-                    </a>
                     <a class="nav-link" href="{{ url('admin/poin') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-coins"></i></div>
                         Poin
+                    </a>
+                    <a class="nav-link" href="{{ url('pemilik/user') }}">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
+                        Pengguna
                     </a>
                     <a class="nav-link" href="{{ url('admin/penyimpanan') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-warehouse"></i></div>
@@ -58,13 +58,13 @@
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-receipt ms-1"></i></div>
                         Transaksi
                     </a>
-                    <a class="nav-link" href="{{ url('admin/user') }}">
-                        <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
-                        Pengguna
-                    </a>
                     <a class="nav-link" href="{{ url('admin/poin') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-coins"></i></div>
                         Poin
+                    </a>
+                    <a class="nav-link" href="{{ url('admin/user') }}">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
+                        Pengguna
                     </a>
                     <a class="nav-link" href="{{ url('admin/penyimpanan') }}">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-warehouse"></i></div>

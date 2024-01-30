@@ -12,7 +12,7 @@
                 <main>
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Layanan</h1>
-                        <ol class="breadcrumb mb-4">
+                        <ol class="breadcrumb mb-2">
                             <li class="breadcrumb-item active">Edit Layanan</li>
                         </ol>
                         @include('template.validate')
@@ -20,33 +20,27 @@
                             <form method="POST" action="{{ url('pemilik/layanan/'.$layanan->id_layanan.'/update') }}">
                                 {{ csrf_field() }} 
 
-                                <label for="nama" class="fw-semibold form-label mx-3 mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="nama" class="fw-semibold form-label mt-2 mb-0">Nama</label>
                                         <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Layanan" value="{{ $layanan->nama }}" />
                                     </div>
-                                </div>
-
-                                <label for="harga" class="fw-semibold form-label mx-3 mt-2 mb-0">Harga</label>
-                                <div class="row mx-3 g-3 mb-1 align-items-center">
-                                    <div class="col-3">
-                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ $layanan->harga }}" />
-                                    </div>
-                                </div>
-
-                                <label for="durasi" class="fw-semibold form-label mx-3 mt-2 mb-0">Durasi</label>
-                                <div class="row mx-3 g-3 mb-1 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-5">
+                                        <label for="durasi" class="fw-semibold form-label mt-2 mb-0">Durasi</label>
                                         <input type="number" id="durasi" class="form-control form-control-lg" name="durasi" placeholder="Durasi Layanan" aria-describedby="durasi" value="{{ $layanan->durasi }}"/>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto align-self-end mb-1">
                                         <label for="durasi" class="col-form-label">Hari</label>
                                     </div>
                                 </div>
 
-                                <label for="satuan" class="fw-semibold form-label mx-3 mt-2 mb-0">Satuan Layanan</label>
                                 <div class="row mx-3 g-3 mb-1 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="harga" class="fw-semibold form-label mt-2 mb-0">Harga</label>
+                                        <input class="form-control form-control-lg" name="harga" id="harga" type="number" placeholder="Harga Layanan" value="{{ $layanan->harga }}" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="satuan" class="fw-semibold form-label mt-2 mb-0">Satuan Layanan</label>
                                         <select class="form-select form-select-lg" name="satuan" aria-label="Default select example" value="{{ $layanan->satuan }}">
                                             <option selected value="{{ $layanan->satuan }}">{{ $layanan->satuan }}</option>
                                             <option value="kg">Kg</option>
@@ -55,10 +49,10 @@
                                     </div>
                                 </div>
 
-                                <label for="status" class="fw-semibold form-label mx-3 mt-2 mb-0">Status</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <select class="form-control form-control-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
+                                    <div class="col-6">
+                                        <label for="status" class="fw-semibold form-label mt-2 mb-0">Status</label>
+                                        <select class="form-select form-select-lg" name="status" aria-label="Default select example" value="{{ Session::get('status') }}">
                                             <option value="{{ $layanan->status }}">{{ $layanan->status }}</option>
                                             <option value="aktif">Aktif</option>
                                             <option value="tidak aktif">Tidak Aktif</option>
@@ -76,6 +70,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

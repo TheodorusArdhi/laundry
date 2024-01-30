@@ -19,34 +19,13 @@
                         <div class="card shadow-lg border-0 rounded-lg fs-5">
                             <form method="POST" action="{{ url('admin/user/store') }}">
                                 {{ csrf_field() }} 
-
-                                <label for="nama" class="fw-semibold form-label mx-3 mt-2 mb-0">Nama</label>
                                 <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="nama" class="fw-semibold form-label mt-2 mb-0">Nama</label>
                                         <input type="text" id="nama" class="form-control form-control-lg" name="nama" placeholder="Nama Admin" value="{{ Session::get('nama') }}" />
                                     </div>
-                                </div>
-
-                                <label for="email" class="fw-semibold form-label mx-3 mt-2 mb-0">Email</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="Email Admin" value="{{ Session::get('email') }}" />
-                                    </div>
-                                </div>
-
-                                <label for="no_telp" class="fw-semibold form-label mx-3 mt-2 mb-0">Nomor Telepon</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
-                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Nomor Telepon Admin" value="{{ Session::get('no_telp') }}" />
-                                        <div id="no_telp" class="form-text">
-                                            Masukkan nomor tanpa spasi
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <label for="cabang" class="fw-semibold form-label mx-3 mt-2 mb-0">Cabang</label>
-                                <div class="row mx-3 g-3 align-items-center">
-                                    <div class="col-3">
+                                    <div class="col-6">
+                                        <label for="cabang" class="fw-semibold form-label mt-2 mb-0">Cabang</label>
                                         <select class="form-select form-select-lg" name="cabang" aria-label=".form-select-lg example" value="{{ Session::get('cabang') }}">
                                             <option selected disabled>Pilih Cabang</option>
                                             @foreach ($cabang as $item)
@@ -56,7 +35,21 @@
                                     </div>
                                 </div>
 
-                                <div class="row mx-3 mb-2 g-3 mt-1 align-items-center">
+                                <div class="row mx-3 g-3 align-items-center">
+                                    <div class="col-6 align-self-start">
+                                        <label for="email" class="fw-semibold form-label mt-2 mb-0">Email</label>
+                                        <input type="email" id="email" class="form-control form-control-lg" name="email" placeholder="Email Admin" value="{{ Session::get('email') }}" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="no_telp" class="fw-semibold form-label mt-2 mb-0">Nomor Telepon</label>
+                                        <input type="text" id="no_telp" class="form-control form-control-lg" name="no_telp" placeholder="Nomor Telepon Admin" value="{{ Session::get('no_telp') }}" />
+                                        <div id="no_telp" class="form-text">
+                                            Masukkan nomor tanpa spasi
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mx-3 mb-2 g-3 align-items-center">
                                     <div class="col-auto">
                                     <a class="btn btn-danger fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/user') }}" role="button">Kembali</a>
                                     </div>
@@ -66,6 +59,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

@@ -34,7 +34,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-start py-3">
-                                        <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}" role="button" data-toggle="tooltip" data-placement="top" title="Daftar Akun">Daftar</a>
+                                        <a class="btn btn-light fw-semibold" style="font-size: 1.12rem;" href="{{ url('register/index') }}" role="button" data-toggle="tooltip" data-placement="top" title="Registrasi Akun">Registrasi</a>
                                     </div>
                                 </div>
                             </div>

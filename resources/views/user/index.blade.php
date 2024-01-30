@@ -13,7 +13,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Pengguna</h1>
                         @if (Auth::user()->level == "pemilik")
-                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/user/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Admin">Tambah Admin <i class="fa-solid fa-plus"></i></a>
+                        <a class="btn btn-laundry fw-semibold" style="font-size: 1.12rem;" href="{{ url('pemilik/user/create') }}" role="button" data-toggle="tooltip" data-placement="top" title="Tambah Admin">Tambah <i class="fa-solid fa-plus"></i></a>
                         @endif
                         <div class="card mb-4 mt-2  fs-5">                            
                             <div class="card-header">
@@ -70,6 +70,7 @@
                         </div>
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>

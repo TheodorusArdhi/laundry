@@ -28,12 +28,23 @@
                                     <div class="col-auto"><button type="submit" class="btn btn-secondary fw-semibold btn-block" role="button" data-toggle="tooltip" data-placement="top" title="Cek Tanggal">Cek</button></div>
                                 </div> 
                                 @if ($penjualan->count() != null)
+                                @php
+                                    $awal = Carbon\Carbon::createFromFormat('d/m/Y', $awal)->format('Y-m-d');
+                                    $akhir = Carbon\Carbon::createFromFormat('d/m/Y', $akhir)->format('Y-m-d');
+                                @endphp
                                     <div class="col-auto">
-                                        @php
-                                            $awal = Carbon\Carbon::createFromFormat('d/m/Y', $awal)->format('Y-m-d');
-                                            $akhir = Carbon\Carbon::createFromFormat('d/m/Y', $akhir)->format('Y-m-d');
-                                        @endphp
-                                        <div class="col-auto"><a class="btn btn-laundry fw-semibold" href={{ url('pemilik/penjualan/export/'.$awal.'/'.$akhir) }} role="button" data-toggle="tooltip" data-placement="top" title="Unduh Excel">Unduh <i class="fa-solid fa-file-export"></i></a></div>
+                                        <div class="col-auto">
+                                            <div class="dropdown">
+                                                <button class="btn btn-laundry dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Export
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ url('pemilik/penjualan/export/'.$awal.'/'.$akhir) }}">Unduh Excel</a></li>
+                                                <li><a class="dropdown-item" href="{{ url('pemilik/penjualan/print/'.$awal.'/'.$akhir) }}">Cetak PDF</a></li>
+                                                </ul>
+                                            </div>
+                                            {{--  <div class="col-auto"><a class="btn btn-laundry fw-semibold" href={{ url('pemilik/penjualan/export/'.$awal.'/'.$akhir) }} role="button" data-toggle="tooltip" data-placement="top" title="Unduh Excel">Unduh <i class="fa-solid fa-file-export"></i></a></div>  --}}
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -49,6 +60,7 @@
                         </div>     
                     </div>
                 </main>
+                @include('template.footer')
                 @include('sweetalert::alert')
             </div>
         </div>
