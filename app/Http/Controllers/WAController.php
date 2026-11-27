@@ -16,6 +16,7 @@ Use Illuminate\Support\Facades\Hash;
 
 class WAController extends Controller
 {
+    const token = 'Authorization: 8W7scFgf3b16vat3GWLZ' ; 
     function invoice($id){
         $transaksi = Transaksi::find($id);
         $transaksiDetail = TransaksiDetail::where('id_transaksi', $id)->get();
@@ -45,7 +46,7 @@ class WAController extends Controller
       'countryCode' => '62'
       ),
       CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
       ),
       ));
       $response = curl_exec($curl);
@@ -82,7 +83,7 @@ Terima kasih telah bergabung dan kami menantikan untuk melayani Anda
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       $response = curl_exec($curl);
@@ -123,7 +124,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
         ),
           CURLOPT_HTTPHEADER => array(
-            'Authorization: M@xN@_FMvK9qSdTShMhi'
+            self::token
           ),
         ));
         $response = curl_exec($curl);
@@ -165,7 +166,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       $response = curl_exec($curl);
@@ -206,7 +207,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
         ),
           CURLOPT_HTTPHEADER => array(
-            'Authorization: M@xN@_FMvK9qSdTShMhi'
+            self::token
           ),
         ));
         $response = curl_exec($curl);
@@ -249,7 +250,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
         ),
           CURLOPT_HTTPHEADER => array(
-            'Authorization: M@xN@_FMvK9qSdTShMhi'
+            self::token
           ),
         ));
         $response = curl_exec($curl);
@@ -291,7 +292,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
         ),
           CURLOPT_HTTPHEADER => array(
-            'Authorization: M@xN@_FMvK9qSdTShMhi'
+            self::token
           ),
         ));
         
@@ -338,7 +339,7 @@ Kami menantikan untuk melayani Anda kembali. Jangan lupa untuk mengunjungi websi
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       
@@ -383,7 +384,7 @@ Kami menantikan untuk melayani Anda kembali. Jangan lupa untuk mengunjungi websi
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       
@@ -425,7 +426,7 @@ Kami menantikan untuk melayani Anda.
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       
@@ -467,7 +468,7 @@ Kami menantikan untuk melayani Anda.
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       
@@ -505,7 +506,7 @@ Kami menantikan untuk melayani Anda.
 Sinar Laundry",
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       
@@ -547,7 +548,7 @@ Terima kasih telah menggunakan layanan kami
 Sinar Laundry ".$cabang,
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi'
+          self::token
         ),
       ));
       $response = curl_exec($curl);
@@ -578,7 +579,7 @@ Sinar Laundry ".$cabang,
 ".$pesan,
       ),
         CURLOPT_HTTPHEADER => array(
-          'Authorization: M@xN@_FMvK9qSdTShMhi' 
+          self::token
         ),
       ));
       

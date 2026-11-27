@@ -57,6 +57,7 @@ class UserController extends Controller
         $no_telp = $request->no_telp;
         $valid = new WAController;
         $valid = $valid->telepon($no_telp);
+        //dd($valid);
         if ($valid->not_registered != null ){
             return redirect('admin/user/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }

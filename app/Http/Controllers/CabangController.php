@@ -46,12 +46,7 @@ class CabangController extends Controller
             return redirect('pemilik/cabang/create')->with('error', 'Nomor tidak terdaftar pada Whatsapp');
         }
 
-        if(substr(trim($no_telp), 0, 2)=="62"){
-            $no_telp = "62".substr(trim($no_telp), 2);
-        }
-        elseif(substr(trim($no_telp), 0, 1)=="0"){
-            $no_telp = "62".substr(trim($no_telp), 1);
-        }
+
 
         $cabang = new Cabang([
             'nama' => $request->nama,

@@ -1,9 +1,9 @@
 <table class="table table-striped table-bordered table-hover me-2 " >
     <thead class="table-dark" >
-        @php
+        {{--  @php
             $awal = Carbon\Carbon::createFromFormat('Y-m-d', $awal)->format('d-m-Y');
             $akhir = Carbon\Carbon::createFromFormat('Y-m-d', $akhir)->format('d-m-Y');
-        @endphp
+        @endphp  --}}
         <tr >
             <th class="text-center" colspan="7">Laporan Penjualan {{ $awal }} - {{ $akhir }}</th>
         </tr>

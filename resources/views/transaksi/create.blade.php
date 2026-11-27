@@ -173,12 +173,12 @@
                                         <input type="text" id="totTag" disabled class="form-control form-control-lg fw-semibold" name="totTag" value="Rp{{ number_format($transaksi->total_tagihan, 0, ".", ".")}}"/> 
                                         <input type="hidden" id="total_tagihan"  class="form-control" name="total_tagihan" value="{{ $transaksi->total_tagihan }}"/>                                                                                       
                                     </div>
-                                    @if ($transaksi->id_user != null && $poin >= 1000 && $level == "anggota")
+                                    @if ($transaksi->id_user != null && $poin >= 100 && $level == "anggota")
                                     <div class="col-6">
                                         <label for="poin" class="fw-semibold form-label mx-3 mt-2 mb-0">Poin</label>
                                         <select class="form-select form-select-lg" name="poin" aria-label="Default select example" value="{{ Session::get('poin') }}" {{  (($transaksi->id_status_transaksi == "7")  ? 'disabled' : '') }}>
                                                 <option selected value="0">Gunakan Poin</option>
-                                                @for ($i = 1000; $i <= $poin; $i = $i+1000)
+                                                @for ($i = 100; $i <= $poin; $i = $i+100)
                                                     <option value="{{ $i }}" > {{ $i }} (Rp{{ number_format($i, 0, ".", ".")}})</option>
                                                 @endfor
                                             </select>

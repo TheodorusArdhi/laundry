@@ -34,6 +34,8 @@ class TransaksiController extends Controller
             Transaksi::where('id_transaksi', $delete)->delete();
         }
 
+        $currentDate = Carbon::parse(now()->format('Y-m-d'));
+
         if(Auth::user()->level == 'pemilik'){
             $transaksi = Transaksi::with('pengumuman', 'user', 'admin', 'statusPembayaran', 'statusTransaksi')->orderByRaw('FIELD(id_status_transaksi,4,5,6,3,7,8)')->orderBy('id_transaksi', 'desc')->get();
         }else{
@@ -524,11 +526,11 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::find($id);
         $transaksiDetail = TransaksiDetail::where('id_transaksi', $id)->get();
         $cabang = Cabang::find($transaksi->id_cabang);
+        
         $data = ['transaksi' => $transaksi,
          'transaksiDetail' => $transaksiDetail,
          'cabang' => $cabang];
         $pdf = Pdf::loadView('transaksi.invoice', $data);
-
         $noTransaksi = Transaksi::where('id_transaksi', $id)->first()->no_transaksi;
 
         return $pdf->download($noTransaksi.'.pdf');

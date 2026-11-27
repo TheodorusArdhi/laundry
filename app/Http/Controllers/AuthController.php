@@ -177,7 +177,7 @@ Kode OTP Anda : *".$otp."*
             $curl,
             CURLOPT_HTTPHEADER,
             array(
-                "Authorization: M@xN@_FMvK9qSdTShMhi",
+                "Authorization: 8W7scFgf3b16vat3GWLZ",
             )
         );
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
@@ -190,7 +190,6 @@ Kode OTP Anda : *".$otp."*
         curl_close($curl);
 
         return redirect('/pelanggan/otp/input')->with('success', 'Koded OTP telah terkirim pada Whatsapp Anda');
-
     }
   
     public function verifyOTP(Request $request){
@@ -245,15 +244,15 @@ Kode OTP Anda : *".$otp."*
         });
         $bulans=[];
         $bulanTotal=[];
+        foreach($data as $bulan => $value){
+            $bulans[]=$bulan;
+            $bulanTotal[]=$value->sum('total_tagihan');
+        }
         if($bulanTotal == null){
             $bulans=now()->translatedFormat('F Y');
             $bulanTotal[0]=0;
-        }else{
-            foreach($data as $bulan => $value){
-                $bulans[]=$bulan;
-                $bulanTotal[]=$value->sum('total_tagihan');
-            }
         }
+        //dd($bulans,$bulanTotal,$data);
         return view('dashboard', compact('transaksi', 'proses', 'diambil', 'batasWaktu', 'bulans', 'bulanTotal'));
     }
 

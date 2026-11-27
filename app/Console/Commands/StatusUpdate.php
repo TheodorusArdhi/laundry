@@ -45,7 +45,6 @@ class StatusUpdate extends Command
                     $WA->prosesSelesai($value->id_transaksi);
                 }
             }
-            \Log::info($hari);
         }
 
         $statusProsesSelesai = Transaksi::where('id_status_transaksi', 4)->get();
@@ -61,7 +60,6 @@ class StatusUpdate extends Command
                     $WA->hampirBatas($value->id_transaksi);
                 }
             }
-            \Log::info($hari);
         }
 
         $statusHampirBatas = Transaksi::where('id_status_transaksi', 5)->get();
@@ -76,7 +74,6 @@ class StatusUpdate extends Command
                     $WA->lebihBatas($value->id_transaksi);
                 }
             }
-            \Log::info($hari);
         }
 
         $poin = Poin::where('status', 'aktif')->get();

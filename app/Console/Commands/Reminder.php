@@ -40,8 +40,20 @@ class Reminder extends Command
             $tgl_masuk = Carbon::parse($value->tgl_masuk)->addDays(30);
             $hari = $currentDate->diffInDays($tgl_masuk, false);
             $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
-            dd($hari);
             if($hari <= 0 && $hari >= -7){
+                if($notif == "on"){
+                    $WA = new WAController;
+                    $WA->kunjunganReminder($value->id_transaksi);
+                }
+            }
+        }
+
+        $kunjungan = Transaksi::where('id_status_transaksi', 7)->get();
+        foreach ($kunjungan as $value){
+            $tgl_masuk = Carbon::parse($value->tgl_masuk)->addDays(30);
+            $hari = $currentDate->diffInDays($tgl_masuk, false);
+            $notif = User::where('id_user', $value->id_user)->first()->notifikasi;
+            if($hari == 0){
                 if($notif == "on"){
                     $WA = new WAController;
                     $WA->kunjunganReminder($value->id_transaksi);

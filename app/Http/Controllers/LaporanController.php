@@ -13,11 +13,14 @@ use App\Exports\LayananExport;
 
 class LaporanController extends Controller
 {
+    const token = "8W7scFgf3b16vat3GWLZ" ;
+    //define('MIN_VALUE', '8W7scFgf3b16vat3GWLZ');
     public function penjualan(){ 
         $penjualan = Transaksi::where('id_status_transaksi', '<', 8)->whereBetween('tgl_masuk', [now()->subDays(30), now()])
         ->orderBy('tgl_masuk', 'desc')->get();
         $awal = date('d/m/Y', strtotime(now()->subDays(30)));
         $akhir = date('d/m/Y', strtotime(now()));
+        dd(token);
         return view('laporan.penjualan', compact('penjualan', 'awal', 'akhir'));
     }
     

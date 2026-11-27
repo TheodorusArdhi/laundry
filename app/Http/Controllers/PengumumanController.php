@@ -26,7 +26,6 @@ class PengumumanController extends Controller
     }
 
     public function store(Request $request){
-
         Session::flash('judul', $request->judul);
         Session::flash('deskripsi', $request->deskripsi);
         Session::flash('diskon', $request->diskon);
@@ -59,7 +58,6 @@ class PengumumanController extends Controller
 
     public function update(Request $request, $id){  
         $pengumuman = Pengumuman::findorfail($id);
-
         $request->validate([
             'judul'=>'required',
             'deskripsi'=>'required',
@@ -89,11 +87,7 @@ class PengumumanController extends Controller
         ], [
             'pesan.required' => 'Pesan Wajib Diisi',
         ]);
-        // $telp = User::select('no_telp')->get();
-        // foreach($telp as $key => $value){
-        //     $temp[$key] = $value->no_telp;
-        // }
-        // $no_telp = implode(',', $temp);
+
         $user = User::whereIn("level", ["pelanggan", "anggota"])->where('notifikasi', 'on')->select('id_user')->get();
         foreach($user as $value){
             $WA = new WAController;
@@ -101,4 +95,10 @@ class PengumumanController extends Controller
         }
         return redirect('pemilik/pengumuman')->with('success', 'Siaran Pengumuman Sukses');
     }
+    
+            // $telp = User::select('no_telp')->get();
+        // foreach($telp as $key => $value){
+        //     $temp[$key] = $value->no_telp;
+        // }
+        // $no_telp = implode(',', $temp);
 }

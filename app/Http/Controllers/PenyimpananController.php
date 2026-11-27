@@ -43,7 +43,6 @@ class PenyimpananController extends Controller
     }
 
     public function store(Request $request){
-
         if(Auth::user()->level == "pemilik"){
             Session::flash('cabang', $request->cabang);
             $request->validate([
@@ -93,7 +92,6 @@ class PenyimpananController extends Controller
 
     public function update(Request $request, $id){  
         $penyimpanan = Penyimpanan::findorfail($id);
-
         if(Auth::user()->level == "pemilik"){
             $request->validate([
                 'cabang'=>'required',
@@ -101,7 +99,6 @@ class PenyimpananController extends Controller
                 'cabang.required' => 'cabang wajib diisi',
             ]);
         }
-
         $request->validate([
             'nama'=>'required',
             'merek'=>'required',
